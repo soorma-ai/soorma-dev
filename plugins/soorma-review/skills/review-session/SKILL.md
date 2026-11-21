@@ -151,18 +151,19 @@ To wait for checks, use the bundled script, which runs under bash whatever the u
 
 ### 6. Keep memory honest
 
-If the agent has persistent memory, it is how the next review, or the next session, knows
-where things stand. Keep it accurate rather than long:
+If the agent has persistent memory, it tells the next review, or the next session, where to
+find the state of the work and what has already happened. Keep it accurate rather than long:
 
-- Record each merge, tag and decision with its date and commit, in the note that tracks the work.
+- Project state lives in the repositories: their state files, briefs, the methodology's
+  current position, and git itself. Memory points to where that state lives, and keeps a dated
+  record of events (each merge, tag and decision, with its date and commit) plus lessons
+  learned. A dated event never goes stale; present-tense status ("open", "green", "still to be
+  applied") does, so memory doesn't hold it. (This skill and its references likewise hold
+  procedure and lessons, never a project's current state.)
 - When a note turns out wrong, correct it in place; do not append a contradiction below it.
 - An explanation you could not prove is recorded as unexplained, not as the cause.
 - The generator may edit the same notes. Read its edits, reconcile duplicates, and re-read a
   note immediately before you change it; then confirm your edit changed what you meant.
-- Project state lives in the repositories: their state files, briefs, the methodology's
-  current position, and git itself. Memory holds pointers to that state and lessons learned,
-  not copies of it, which go stale the moment the repository moves on. (This skill and its
-  references likewise hold procedure and lessons, never a project's current state.)
 - Memory is often tied to the directory the reviewer starts in (Claude Code keeps it per
   project directory). Start the reviewer from the same directory each time, or it begins with
   none of its earlier notes and starts a separate store.

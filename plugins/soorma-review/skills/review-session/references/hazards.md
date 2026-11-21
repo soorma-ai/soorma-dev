@@ -428,16 +428,19 @@ where the point was only that it shouldn't claim the merge.
 
 ## 29. Project state lives in the repositories
 
-**Lesson:** a project's current state (what is merged, what is open, which milestone is in
+**Lesson:** a project's current state (what is open, what is green, which milestone is in
 flight) lives in its repositories: state files, briefs, the methodology's current position, and
 git itself. A skill and its references hold procedure and lessons. A reviewer's memory holds
-pointers to that state, and lessons.
+pointers to that state, lessons, and a dated record of events: "#N merged as `<sha>` on
+`<date>`", "the human decided X on `<date>`". A dated event stays true; present-tense status
+("open", "green", "still to be applied") is the copy that goes stale.
 
 **Why:** a copy of state goes stale as soon as the repository moves on, and a stale copy read
 with confidence is worse than none.
 
 **Do:** record where the state is ("the brief's status line", "aidlc-state.md in that
-repository"), not what it says. Read the source when you need the state.
+repository"), not what it says, and record events with their date and commit. Never write
+status in the present tense. Read the source when you need the state.
 
 **Evidence:** a memory note written during the work recorded a repository's branch protection as
 still to be applied; within the hour it was applied, the note was stale, and the other session
