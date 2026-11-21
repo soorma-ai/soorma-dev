@@ -4,3 +4,5 @@ __pycache__/
 .env
 .env.*
 .claude/settings.local.json
+# claude plugin eval output
+evals/results/

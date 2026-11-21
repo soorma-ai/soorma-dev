@@ -33,6 +33,9 @@ jobs:
       - name: Check manifests, skill frontmatter, relative links, secrets, and workflows
         run: python3 -I tools/validate.py
 
+      - name: Run the plugins' script tests
+        run: python3 -I tools/run_tests.py
+
   # Required check: this job's name, "Dependency review", is a required status
   # check on main in this repository's ruleset. Renaming the job blocks every
   # pull request into main until the ruleset is updated in the same change.

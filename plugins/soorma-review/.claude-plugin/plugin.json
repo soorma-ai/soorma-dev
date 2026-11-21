@@ -1,0 +1,11 @@
+{
+  "name": "soorma-review",
+  "description": "Review an AI agent's working session as its reviewer: verify its claims against git, GitHub and CI, merge with the human approver, and hand back paste-ready instructions.",
+  "author": {
+    "name": "soorma.ai"
+  },
+  "homepage": "https://github.com/soorma-ai/soorma-dev/tree/main/plugins/soorma-review",
+  "repository": "https://github.com/soorma-ai/soorma-dev",
+  "license": "FSL-1.1-ALv2",
+  "keywords": ["review", "code-review", "pull-requests", "ci", "agents"]
+}

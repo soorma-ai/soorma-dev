@@ -1,0 +1,15 @@
+{
+  "name": "soorma-dev",
+  "description": "Claude Code plugins for working by soorma.ai's development methodology.",
+  "owner": {
+    "name": "soorma.ai"
+  },
+  "plugins": [
+    {
+      "name": "soorma-review",
+      "source": "./plugins/soorma-review",
+      "description": "Review an AI agent's working session as its reviewer: verify its claims against git, GitHub and CI, merge with the human approver, and hand back paste-ready instructions.",
+      "category": "development"
+    }
+  ]
+}
