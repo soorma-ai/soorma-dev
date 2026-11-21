@@ -145,14 +145,21 @@ def list_dir(directory, limit=15):
     if not found:
         for sub in names:
             folder = os.path.join(directory, sub)
-            if os.path.isdir(folder):
-                found += [(sub, os.path.join(folder, n))
-                          for n in sorted(os.listdir(folder)) if n.endswith(".jsonl")]
+            if not os.path.isdir(folder):
+                continue
+            try:
+                inside = sorted(os.listdir(folder))
+            except OSError as e:
+                print(f"skipped {folder}: {e.strerror}", file=sys.stderr)
+                continue
+            found += [(sub, os.path.join(folder, n)) for n in inside if n.endswith(".jsonl")]
     if not found:
         print(f"no transcripts (*.jsonl) in {directory} or its immediate subdirectories",
               file=sys.stderr)
         return 1
     found.sort(key=lambda f: os.path.getmtime(f[1]), reverse=True)
+    if len(found) > limit:
+        print(f"({len(found) - limit} more not shown)", file=sys.stderr)
     for folder, path in found[:limit]:
         cwd, branch, last, first = summarise(path)
         name = os.path.basename(path)

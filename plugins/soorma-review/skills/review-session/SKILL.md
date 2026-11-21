@@ -151,10 +151,15 @@ To wait for checks, use the bundled script, which runs under bash whatever the u
 
 ### 6. Keep memory honest
 
-If the agent has persistent memory, it is how the next review, or the next session, knows
-where things stand. Keep it accurate rather than long:
+If the agent has persistent memory, it tells the next review, or the next session, where to
+find the state of the work and what has already happened. Keep it accurate rather than long:
 
-- Record each merge, tag and decision with its date and commit, in the note that tracks the work.
+- Project state lives in the repositories: their state files, briefs, the methodology's
+  current position, and git itself. Memory points to where that state lives, and keeps a dated
+  record of events (each merge, tag and decision, with its date and commit) plus lessons
+  learned. A dated event never goes stale; present-tense status ("open", "green", "still to be
+  applied") does, so memory doesn't hold it. (This skill and its references likewise hold
+  procedure and lessons, never a project's current state.)
 - When a note turns out wrong, correct it in place; do not append a contradiction below it.
 - An explanation you could not prove is recorded as unexplained, not as the cause.
 - The generator may edit the same notes. Read its edits, reconcile duplicates, and re-read a
@@ -178,6 +183,13 @@ The generator reads the block and nothing else of your reply, so it must stand a
   bounds: no merging, no tags, no settings, no fixes pushed past a failing gate.
 - **Ask for evidence back**: commit SHAs, run IDs, `git ls-remote` output,
   `closingIssuesReferences`. Evidence requested is evidence you don't have to dig for.
+- **Don't predict identifiers.** Never state a PR number, run ID or SHA that doesn't exist
+  yet: say "the new PR", and ask for the number the command returns. A guessed number is
+  wrong as soon as anything else is opened first, and the generator will use it.
+- **Separate claiming from checking.** Tell the generator not to present another actor's
+  action (your merge, the human's tag or setting) as its own work, but let it verify that
+  action's result itself. "Don't re-check the merge" throws away a check; "don't claim the
+  merge" keeps the record straight.
 - **Restate the rules that bite**: refer to issues as "for #N", never with a closing keyword;
   the project's commit trailers; bash for wait scripts.
 - **Make the first line distinctive**, so the next extraction can anchor on it.
@@ -214,6 +226,9 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 24. Gate order: a PR that a later gate reviews stays open until that gate.
 25. Shared memory edited by more than one session.
 26. An instruction block states as decided only what the human decided.
+27. Don't predict identifiers: no PR number, run ID or SHA before it exists.
+28. Separate claiming from checking: never claim another actor's action, always verify its result.
+29. Project state lives in the repositories, not in the skill or in memory.
 
 ## Reference files
 
