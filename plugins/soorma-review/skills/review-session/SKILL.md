@@ -159,6 +159,10 @@ where things stand. Keep it accurate rather than long:
 - An explanation you could not prove is recorded as unexplained, not as the cause.
 - The generator may edit the same notes. Read its edits, reconcile duplicates, and re-read a
   note immediately before you change it; then confirm your edit changed what you meant.
+- Project state lives in the repositories: their state files, briefs, the methodology's
+  current position, and git itself. Memory holds pointers to that state and lessons learned,
+  not copies of it, which go stale the moment the repository moves on. (This skill and its
+  references likewise hold procedure and lessons, never a project's current state.)
 - Memory is often tied to the directory the reviewer starts in (Claude Code keeps it per
   project directory). Start the reviewer from the same directory each time, or it begins with
   none of its earlier notes and starts a separate store.
@@ -178,6 +182,13 @@ The generator reads the block and nothing else of your reply, so it must stand a
   bounds: no merging, no tags, no settings, no fixes pushed past a failing gate.
 - **Ask for evidence back**: commit SHAs, run IDs, `git ls-remote` output,
   `closingIssuesReferences`. Evidence requested is evidence you don't have to dig for.
+- **Don't predict identifiers.** Never state a PR number, run ID or SHA that doesn't exist
+  yet: say "the new PR", and ask for the number the command returns. A guessed number is
+  wrong as soon as anything else is opened first, and the generator will use it.
+- **Separate claiming from checking.** Tell the generator not to present another actor's
+  action (your merge, the human's tag or setting) as its own work, but let it verify that
+  action's result itself. "Don't re-check the merge" throws away a check; "don't claim the
+  merge" keeps the record straight.
 - **Restate the rules that bite**: refer to issues as "for #N", never with a closing keyword;
   the project's commit trailers; bash for wait scripts.
 - **Make the first line distinctive**, so the next extraction can anchor on it.
@@ -214,6 +225,9 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 24. Gate order: a PR that a later gate reviews stays open until that gate.
 25. Shared memory edited by more than one session.
 26. An instruction block states as decided only what the human decided.
+27. Don't predict identifiers: no PR number, run ID or SHA before it exists.
+28. Separate claiming from checking: never claim another actor's action, always verify its result.
+29. Project state lives in the repositories, not in the skill or in memory.
 
 ## Reference files
 

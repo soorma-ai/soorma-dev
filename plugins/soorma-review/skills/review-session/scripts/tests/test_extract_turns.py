@@ -165,5 +165,53 @@ class ExtractTurns(unittest.TestCase):
                 self.assertTrue(err.getvalue())
 
 
+    def list_capture(self, target):
+        out, err = io.StringIO(), io.StringIO()
+        old = sys.stdout, sys.stderr
+        sys.stdout, sys.stderr = out, err
+        try:
+            code = et.main(["--list", target])
+        finally:
+            sys.stdout, sys.stderr = old
+        return code, out.getvalue(), err.getvalue()
+
+    def test_list_reports_what_the_cap_hides(self):
+        many = tempfile.TemporaryDirectory()
+        self.addCleanup(many.cleanup)
+        for i in range(18):
+            with open(os.path.join(many.name, f"s{i:02}.jsonl"), "w") as f:
+                f.write(json.dumps(rec("user", f"task {i}", "2026-01-03T00:00:00Z")) + "\n")
+        code, out, err = self.list_capture(many.name)
+        self.assertEqual(code, 0)
+        self.assertEqual(out.count(".jsonl\n"), 15)
+        self.assertEqual(err.strip(), "(3 more not shown)")
+
+    def test_list_skips_an_unreadable_subfolder(self):
+        root = tempfile.TemporaryDirectory()
+        self.addCleanup(root.cleanup)
+        good = os.path.join(root.name, "-work-good")
+        locked = os.path.join(root.name, "-work-locked")
+        for folder in (good, locked):
+            os.mkdir(folder)
+            with open(os.path.join(folder, "s.jsonl"), "w") as f:
+                f.write(json.dumps(rec("user", "task", "2026-01-04T00:00:00Z")) + "\n")
+        os.chmod(locked, 0)
+        self.addCleanup(os.chmod, locked, 0o700)
+        if hasattr(os, "geteuid") and os.geteuid() == 0:
+            self.skipTest("running as root: chmod 000 doesn't stop reading")
+        try:
+            os.listdir(locked)
+            self.skipTest("chmod 000 had no effect on this file system")
+        except PermissionError:
+            pass
+        code, out, err = self.list_capture(root.name)
+        self.assertEqual(code, 0)
+        self.assertIn("-work-good  s.jsonl", out)
+        self.assertNotIn("-work-locked", out)
+        self.assertIn("skipped", err)
+        self.assertIn("-work-locked", err)
+        self.assertNotIn("Traceback", err)
+
+
 if __name__ == "__main__":
     unittest.main()

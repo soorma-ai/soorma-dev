@@ -34,6 +34,9 @@ project records them, are in that project's reference folder.
 24. [Gate order](#24-gate-order)
 25. [Shared memory edited by more than one session](#25-shared-memory-edited-by-more-than-one-session)
 26. [Decisions the human hasn't made](#26-decisions-the-human-hasnt-made)
+27. [Predicted identifiers](#27-predicted-identifiers)
+28. [Claiming versus checking](#28-claiming-versus-checking)
+29. [Project state lives in the repositories](#29-project-state-lives-in-the-repositories)
 
 ## 1. Closing keywords
 
@@ -391,3 +394,51 @@ acting on it.
 
 **Evidence:** a trial review's instruction block listed two fixes under the human's decisions,
 to be made before the merge, when the human had not yet decided anything.
+
+## 27. Predicted identifiers
+
+**Lesson:** an instruction never states an identifier that doesn't exist yet: a PR or issue
+number, a run ID, a commit SHA.
+
+**Why:** numbers are assigned when the thing is created, and anything else created first (a bot's
+PR, another session's issue) takes the number you guessed. The generator then waits on, checks,
+or comments on the wrong item.
+
+**Do:** say "the new PR" or "the commit you make", and ask for the identifier the command
+returns. Use that identifier from then on.
+
+**Evidence:** an instruction for a follow-up named it by the PR number it expected to get, before
+the PR existed.
+
+## 28. Claiming versus checking
+
+**Lesson:** keep two things apart: who did an action, and whether its result is right. The
+generator doesn't claim another actor's action (a merge, a tag, a setting) as its own work. It
+does verify that action's result itself.
+
+**Why:** an instruction that says "don't re-check the merge" removes an independent check, and a
+report that says "I merged" when the reviewer did misstates the record. Both errors come from
+treating attribution and verification as the same thing.
+
+**Do:** write "the reviewer merged #N as `<sha>`; don't describe it as your work, but check
+main's head yourself".
+
+**Evidence:** an instruction told the generator not to re-check a merge the reviewer had made,
+where the point was only that it shouldn't claim the merge.
+
+## 29. Project state lives in the repositories
+
+**Lesson:** a project's current state (what is merged, what is open, which milestone is in
+flight) lives in its repositories: state files, briefs, the methodology's current position, and
+git itself. A skill and its references hold procedure and lessons. A reviewer's memory holds
+pointers to that state, and lessons.
+
+**Why:** a copy of state goes stale as soon as the repository moves on, and a stale copy read
+with confidence is worse than none.
+
+**Do:** record where the state is ("the brief's status line", "aidlc-state.md in that
+repository"), not what it says. Read the source when you need the state.
+
+**Evidence:** a memory note written during the work recorded a repository's branch protection as
+still to be applied; within the hour it was applied, the note was stale, and the other session
+had to correct it.
