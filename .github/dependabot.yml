@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: FSL-1.1-ALv2
+#
+# Dependabot version updates for the pinned actions, held to the same 7-day
+# release cooldown as soorma-core. Each update PR still has to pass CI.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5

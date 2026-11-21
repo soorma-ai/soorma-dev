@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: FSL-1.1-ALv2
+#
+# soorma-dev CI. Every action is pinned by commit SHA, with its release tag in
+# a comment. Permissions default to read-only; no job widens them.
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Required check: this job's name, "Validate", is a required status check on
+  # main in this repository's ruleset. Renaming the job blocks every pull
+  # request into main until the ruleset is updated in the same change.
+  validate:
+    name: Validate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The runner's own Python 3; the script uses the standard library only.
+      - name: Check manifests, skill frontmatter, relative links, secrets, and workflows
+        run: python3 -I tools/validate.py
+
+  # Required check: this job's name, "Dependency review", is a required status
+  # check on main in this repository's ruleset. Renaming the job blocks every
+  # pull request into main until the ruleset is updated in the same change.
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
