@@ -55,6 +55,11 @@ The plugin is loaded in place: after editing it, run `/reload-plugins` in that s
   as the parent directory of your checkouts or a workspace that includes them all. It needn't
   share a generator's working directory. It needs `gh` signed in with access to those
   repositories.
+- **Start the reviewer from the same directory every time.** Claude Code keeps a session's
+  memory per starting directory, and the reviewer's notes (merges, decisions, open items) are
+  what let the next review pick up where the last one stopped. Started from a different
+  directory, it has none of them and begins a separate memory store. Before its first review it
+  reads its memory index, if one exists.
 
 ### The loop
 

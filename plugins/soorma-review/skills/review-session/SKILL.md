@@ -39,6 +39,9 @@ checks, conventions, and where its methodology lives). Find the one for the proj
 reviewing and read its `README.md`. If none matches, ask the human for the branch flow and
 required checks before you merge anything.
 
+Then read your memory index, if the agent keeps one (for Claude Code, `MEMORY.md` in the
+project's memory folder): it holds what earlier reviews recorded, and step 6 keeps it current.
+
 ## The review, step by step
 
 One review covers one generator turn: everything since your last instruction.
@@ -51,8 +54,13 @@ the agent; for Claude Code see [references/transcripts-claude-code.md](reference
 To list candidates with their working directory, branch, last activity and first prompt:
 
 ```sh
-python3 -I "${CLAUDE_SKILL_DIR}/scripts/extract_turns.py" --list <transcript-directory>
+python3 -I "${CLAUDE_SKILL_DIR}/scripts/extract_turns.py" --list ~/.claude/projects
 ```
+
+For Claude Code, list the whole `~/.claude/projects` root, as above, and match by the `cwd`
+column rather than by folder name. A session started from a multi-folder editor workspace is
+stored under the primary folder's slug, not its own working directory, so the generator's
+transcript can sit in a folder named after a different repository.
 
 Pick by last activity, then confirm it is the right session: its working directory and branch
 match the work, and your last instruction appears in it. Several sessions may be live at once,
@@ -151,6 +159,9 @@ where things stand. Keep it accurate rather than long:
 - An explanation you could not prove is recorded as unexplained, not as the cause.
 - The generator may edit the same notes. Read its edits, reconcile duplicates, and re-read a
   note immediately before you change it; then confirm your edit changed what you meant.
+- Memory is often tied to the directory the reviewer starts in (Claude Code keeps it per
+  project directory). Start the reviewer from the same directory each time, or it begins with
+  none of its earlier notes and starts a separate store.
 - No secrets, tokens, or personal data in notes.
 
 ### 7. Write the next instruction block
@@ -158,7 +169,10 @@ where things stand. Keep it accurate rather than long:
 The generator reads the block and nothing else of your reply, so it must stand alone.
 
 - **Start with the verified state**: "#12 is merged as `abc1234`", "the tag is pushed".
-- **Then the human's decisions**, in their own words where they gave them.
+- **Then the human's decisions**: only what the human actually decided, in their own words
+  where they gave them. A choice the human hasn't made yet is not a decision: ask first, or put
+  it in the block as your recommendation, marked as awaiting their decision. The generator acts
+  on whatever the block states as decided.
 - **Then numbered steps**, each one small enough to check.
 - **Put explicit STOP points** where the human must look or decide, and say what is out of
   bounds: no merging, no tags, no settings, no fixes pushed past a failing gate.
@@ -199,6 +213,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 23. Settings and organisation actions belong to the human.
 24. Gate order: a PR that a later gate reviews stays open until that gate.
 25. Shared memory edited by more than one session.
+26. An instruction block states as decided only what the human decided.
 
 ## Reference files
 

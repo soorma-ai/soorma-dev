@@ -32,3 +32,4 @@ soorma-aidlc are private: their references are *(access-required)*. Incidents ar
 | 23 | Settings belong to the human | The session that created `soorma-ai/cla-assistant-action` stopped before protecting it; the protection was applied and read back from the review side (2026-11-20). soorma-dev's rulesets and Actions policy were applied by the human after the scaffold (2026-11-21) |
 | 24 | Gate order | soorma-core#2 was kept open past an earlier recommendation to merge it, because the initiative's Inception PR gate came after Units Generation (2026-11-02) |
 | 25 | Shared memory | A scripted replacement in the shared memory index changed nothing, because the other session had rewritten the line in the meantime (2026-11-21) |
+| 26 | Decisions the human hasn't made | The first trial of this plugin, reviewing the session that built it, wrote an instruction block that presented fixes as the human's decisions before the human had decided anything (2026-11-21) |

@@ -4,7 +4,10 @@
 Keeps the human's messages and the agent's text. Skips thinking and subagent
 (sidechain) records. Tool calls and tool results are opt-in.
 
-List candidate transcripts in a directory, newest first:
+List candidate transcripts, newest first, with each one's working directory,
+branch, last activity and first prompt. DIR is one project folder, or a root
+such as ~/.claude/projects, whose project folders are then scanned (exit 1 if
+none is found):
     python3 -I extract_turns.py --list DIR
 
 Extract a turn:
@@ -116,25 +119,46 @@ def select(entries, anchor=None, last_turns=None):
     return entries
 
 
-def list_dir(directory):
-    rows = []
-    for name in os.listdir(directory):
-        if not name.endswith(".jsonl"):
+def summarise(path):
+    """Return (cwd, branch, last activity, first human prompt) for a transcript."""
+    cwd = branch = first = last = ""
+    for r in records(path):
+        if r.get("type") not in ("user", "assistant") or r.get("isSidechain"):
             continue
-        path = os.path.join(directory, name)
-        cwd = branch = first = last = ""
-        for r in records(path):
-            if r.get("type") not in ("user", "assistant") or r.get("isSidechain"):
-                continue
-            cwd = r.get("cwd") or cwd
-            branch = r.get("gitBranch") or branch
-            last = r.get("timestamp", last)
-            if not first and r["type"] == "user" and not r.get("isCompactSummary"):
-                first = flat(user_text((r.get("message") or {}).get("content")), 80)
-        rows.append((os.path.getmtime(path), name, cwd, branch, last[:19], first))
-    rows.sort(reverse=True)
-    for _, name, cwd, branch, last, first in rows[:15]:
-        print(f"{name}\n    cwd={cwd} branch={branch} last={last}\n    first: {first}")
+        cwd = r.get("cwd") or cwd
+        branch = r.get("gitBranch") or branch
+        last = r.get("timestamp", last)
+        if not first and r["type"] == "user" and not r.get("isCompactSummary"):
+            first = flat(user_text((r.get("message") or {}).get("content")), 80)
+    return cwd, branch, last[:19], first
+
+
+def list_dir(directory, limit=15):
+    """List transcripts, newest first. DIR may be one project folder, or a
+    root (such as ~/.claude/projects) whose immediate subdirectories hold them."""
+    try:
+        names = sorted(os.listdir(directory))
+    except OSError as e:
+        print(f"cannot list {directory}: {e.strerror}", file=sys.stderr)
+        return 1
+    found = [(None, os.path.join(directory, n)) for n in names if n.endswith(".jsonl")]
+    if not found:
+        for sub in names:
+            folder = os.path.join(directory, sub)
+            if os.path.isdir(folder):
+                found += [(sub, os.path.join(folder, n))
+                          for n in sorted(os.listdir(folder)) if n.endswith(".jsonl")]
+    if not found:
+        print(f"no transcripts (*.jsonl) in {directory} or its immediate subdirectories",
+              file=sys.stderr)
+        return 1
+    found.sort(key=lambda f: os.path.getmtime(f[1]), reverse=True)
+    for folder, path in found[:limit]:
+        cwd, branch, last, first = summarise(path)
+        name = os.path.basename(path)
+        where = f"{folder}  {name}" if folder else name
+        print(f"{where}\n    cwd={cwd} branch={branch} last={last}\n    first: {first}")
+    return 0
 
 
 def main(argv=None):
@@ -151,8 +175,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     if a.list:
-        list_dir(a.list)
-        return 0
+        return list_dir(a.list)
     if not a.transcript:
         ap.error("a transcript path is required unless --list is given")
 

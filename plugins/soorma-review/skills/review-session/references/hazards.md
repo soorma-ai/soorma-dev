@@ -33,6 +33,7 @@ project records them, are in that project's reference folder.
 23. [Settings belong to the human](#23-settings-belong-to-the-human)
 24. [Gate order](#24-gate-order)
 25. [Shared memory edited by more than one session](#25-shared-memory-edited-by-more-than-one-session)
+26. [Decisions the human hasn't made](#26-decisions-the-human-hasnt-made)
 
 ## 1. Closing keywords
 
@@ -374,3 +375,19 @@ duplicate notes rather than keeping both.
 
 **Evidence:** a scripted replacement in the memory index changed nothing, because the other
 session had rewritten the line in the meantime.
+
+## 26. Decisions the human hasn't made
+
+**Lesson:** an instruction block states as decided only what the human actually decided.
+
+**Why:** the generator acts on whatever the block calls a decision. A reviewer's recommendation
+written as "the human's decision" becomes one without the human having made it, and the record
+the generator keeps says the human chose it.
+
+**Do:** before writing the block, separate what the human decided from what you recommend. For
+an open choice, ask the human first; or, if the block has to go now, write the item as your
+recommendation, marked as awaiting the human's decision, and tell the generator to stop before
+acting on it.
+
+**Evidence:** a trial review's instruction block listed two fixes under the human's decisions,
+to be made before the merge, when the human had not yet decided anything.
