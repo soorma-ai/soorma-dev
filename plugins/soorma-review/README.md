@@ -34,18 +34,19 @@ from a full git URL (`https://github.com/soorma-ai/soorma-dev.git`) or from a lo
 holding a checkout. Installing from GitHub reads the default branch, `main`, so changes waiting
 on `dev` aren't installed until they are merged.
 
-**To upgrade** after later merges to soorma-dev's `main`, refresh the marketplace, update the
-plugin, then start a new reviewer session, because a running session keeps the version it
-started with:
+**To upgrade** after later merges to soorma-dev's `main`, refresh the marketplace, then update
+the plugin:
 
 ```sh
 claude plugin marketplace update soorma-dev
 claude plugin update soorma-review@soorma-dev
 ```
 
-The plugin has no version number while it is pre-release, so each merged commit counts as a new
-version. Claude Code doesn't update this marketplace on its own, so run both commands whenever
-you want the latest.
+The update takes effect in a new session, or after `/reload-plugins` in a running one. While the
+plugin is pre-release it has no version number, so Claude Code uses the commit SHA of its
+installed directory as its version. Claude Code doesn't auto-update third-party marketplaces by
+default: run both commands when you want the latest, or turn on auto-update for soorma-dev in
+`/plugin` > Marketplaces.
 
 **From a local checkout**, for one session and without installing anything, start the reviewer
 with the plugin directory's absolute path:
