@@ -30,6 +30,10 @@ claude plugin marketplace add soorma-ai/soorma-dev
 claude plugin install soorma-review@soorma-dev
 ```
 
+How to run a review session with it, and how to try it from a local checkout: see
+[Using it](plugins/soorma-review/README.md#using-it) and
+[Install](plugins/soorma-review/README.md#install) in the plugin's README.
+
 ## What this is not, yet
 
 - **Not the methodology's rules.** They are maintained separately; plugins here link to them at

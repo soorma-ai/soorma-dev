@@ -58,6 +58,10 @@ Pick by last activity, then confirm it is the right session: its working directo
 match the work, and your last instruction appears in it. Several sessions may be live at once,
 and your own session's transcript is in the same place; never review yourself.
 
+On the first review there is no instruction of yours to find. If the human hasn't said which
+session or repository to review, ask. If the human started the generator with a prompt you
+didn't write, ask for that prompt's first line and anchor on it.
+
 ### 2. Extract what it did since your last instruction
 
 Anchor on a phrase that appears once, near the start of your last instruction block (its first
@@ -202,3 +206,5 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 - [references/transcripts-claude-code.md](references/transcripts-claude-code.md): where Claude Code keeps transcripts and how to read them.
 - `references/<project>/`: one project's specifics, starting from its `README.md`.
 - `scripts/extract_turns.py`, `scripts/closing_keywords.py`, `scripts/wait_for_checks.sh`: run them; they don't need reading first.
+  The commands above already carry this skill's directory, filled in when this file was loaded.
+  The shell has no variable holding it, so copy the full path from those commands.
