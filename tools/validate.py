@@ -11,7 +11,8 @@ Checks every file git tracks:
                 .claude-plugin/plugin.json parse, carry their required fields,
                 and agree with each other; every other tracked .json parses.
 2. skills     - each skills/<name>/SKILL.md opens with frontmatter whose name
-                matches its directory and whose description is present.
+                matches its directory, whose description is present, and whose
+                keys are all ones every Agent Skills surface accepts.
 3. links      - every relative Markdown link resolves to a tracked file or
                 directory inside the repository.
 4. secrets    - no private key, token, credential assignment, email address
@@ -112,6 +113,9 @@ def check_manifests(files):
 
 # --- 2. skills --------------------------------------------------------------
 
+# The keys every Agent Skills surface accepts; others are rejected outside Claude Code.
+PORTABLE_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+
 def check_skills(files):
     for f in files:
         m = re.fullmatch(r"(?:.*/)?skills/([^/]+)/SKILL\.md", f)
@@ -144,6 +148,9 @@ def check_skills(files):
             report(f, 1, "frontmatter: 'name' must be lowercase letters, digits, hyphens, at most 64")
         elif name != m.group(1):
             report(f, 1, f"frontmatter: name '{name}' does not match directory '{m.group(1)}'")
+        extra = sorted(set(fields) - PORTABLE_KEYS)
+        if extra:
+            report(f, 1, f"frontmatter keys outside the portable set: {', '.join(extra)}")
         desc = fields.get("description", "").strip("'\">|-").strip()
         if not desc:
             report(f, 1, "frontmatter: 'description' is required")

@@ -2,8 +2,8 @@
 
 Tooling for working by soorma.ai's development methodology.
 
-> **Status: scaffold only.** Nothing here is installable yet. The first deliverable, a Claude Code
-> plugin with one skill for reviewing working sessions, is being built on `dev`.
+> **Status: pre-release.** One plugin so far, [`soorma-review`](plugins/soorma-review/README.md), with
+> one skill for reviewing working sessions. Names and behaviour may change until a first release.
 
 ## What this is
 
@@ -16,6 +16,23 @@ decisions.
 `soorma-dev` packages procedures for working that way as [Claude Code](https://docs.claude.com/en/docs/claude-code)
 plugins. A plugin here carries a procedure, and points at the methodology's rules rather than
 restating them.
+
+## Plugins
+
+| Plugin | What it does |
+|---|---|
+| [`soorma-review`](plugins/soorma-review/README.md) | Review an AI agent's working session as its reviewer: verify its claims against git, GitHub and CI, merge with the human approver, and hand back paste-ready instructions |
+
+This repository is a Claude Code plugin marketplace:
+
+```sh
+claude plugin marketplace add soorma-ai/soorma-dev
+claude plugin install soorma-review@soorma-dev
+```
+
+How to run a review session with it, and how to try it from a local checkout: see
+[Using it](plugins/soorma-review/README.md#using-it) and
+[Install](plugins/soorma-review/README.md#install) in the plugin's README.
 
 ## What this is not, yet
 

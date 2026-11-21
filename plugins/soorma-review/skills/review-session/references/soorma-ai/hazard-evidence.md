@@ -1,0 +1,35 @@
+<!-- SPDX-License-Identifier: FSL-1.1-ALv2 -->
+
+# soorma-ai incidents behind each hazard
+
+The hazard numbers match the skill's `references/hazards.md`. Dates are UTC. soorma-prd and
+soorma-aidlc are private: their references are *(access-required)*. Incidents are paraphrased.
+
+| # | Hazard | soorma-ai incidents |
+|---|---|---|
+| 1 | Closing keywords | soorma-prd#35, merged 2026-11-17, closed soorma-prd#25 through a "resolves" phrase; it was reopened *(access-required)*. soorma-core#39's text said "doesn't close" before an issue number and GitHub linked that issue for closing; it was reworded (2026-11-20). The body drafted for soorma-core#45 had the same phrase and was reworded before posting (2026-11-20). The draft body of soorma-prd#39 (2026-11-21) was caught by the grep *(access-required)*. soorma-aidlc#9 made the check a rule every session loads *(access-required)* |
+| 2 | Trusted-trigger workflows | soorma-sdk's fix for its sign-off check under `pull_request_target` couldn't run on its own PR and was reverted; the risk was accepted instead (2026-11-20). soorma-core#46 changed the CLA action pin; its own CLA run used the old pin, and throwaway soorma-core#47 proved the new one (2026-11-21) |
+| 3 | zsh-isms | A CI wait loop for soorma-core#43 ran out its 25-minute timeout (2026-11-20). In the session behind soorma-aidlc#9, a link check got its file list as one argument and read nothing *(access-required)*. `===` separators failed in the reviewer's own commands from 2026-10 to 2026-11. A `$T:contract` expansion lost a character as a zsh modifier (2026-11). A soorma-prd session's loop variable named `path` emptied the command path (2026-11-21) |
+| 4 | Refused commands | The session behind soorma-core#45 had its push-and-open-PR command refused twice by the auto-mode safety check; it stopped, and the PR was opened from the review side after a closing keyword was removed from the body (2026-11-20) |
+| 5 | Stale checks | soorma-core#33 was held for a fresh run after soorma-core#31 moved `main` (2026-11-20). Before tagging `contract-v0.1.0+core.1`, the merge commit of soorma-core#44 was confirmed to have the tree CI tested |
+| 6 | Bot commands | Three `@dependabot rebase` comments on soorma-core's Dependabot PRs, seconds apart, got one response; `@dependabot recreate` worked (2026-11-20). soorma-core#30 stayed open until Dependabot's next run after soorma-core#42 superseded it |
+| 7 | Secrets in scratch files | During soorma-core maintenance (2026-11-20), a test database's connection file with its password, and a scratch backup of `ci.yml`, were found and deleted |
+| 8 | Published tags | `contract-v0.1.0` stayed on its commit while `+core.1` and `+core.2` were published as new tags, each pushed alone from an approved annotation (2026-11-20) |
+| 9 | The generator never merges | The session building soorma-core's U4 was told soorma-core#18 and #19 were merged before they were; both times it found the PR open and stopped (2026-11-11) |
+| 10 | Unproven explanations | soorma-core#33 read as blocked to the gh token but clean anonymously; a token-scope theory was recorded, then disproven when the same token merged it (2026-11-20) |
+| 11 | Bare issue references | The handover saved as soorma-sdk#27 referred to soorma-core's #36 as a bare number; it was qualified before posting (2026-11-21) |
+| 12 | Required-check names | soorma-core's and soorma-dev's workflows carry a comment on each required job. soorma-sdk#28 renamed a job safely because only `Check sign-off` is required there |
+| 13 | A narrow local gate | soorma-core#17 failed its image check in CI: a new package was missing from the Dockerfile's copy lists, and the local gate never built the image (2026-11-11) |
+| 14 | Non-unique edit anchors | In soorma-sdk's first initiative, an insertion into `aidlc-state.md` matched a heading's words inside a table row and split the table (2026-11-18) |
+| 15 | Missing commit trailers | Two early soorma-sdk commits without a sign-off forced a rebase and a one-off force push of `dev` (2026-11-18) |
+| 16 | A branch behind its base | A soorma-prd PR merged from a feature branch left `dev` behind `main` (2026-10-04) *(access-required)* |
+| 17 | Rules where they aren't loaded | The plan for soorma-aidlc#9 first put the closing-keyword rule in the opt-in PR-checkpoint extension; it moved to a rule file every session loads (2026-11-21) *(access-required)* |
+| 18 | The reviewer can be wrong | Reviews of soorma-core's M1 inception missed a subsection of the Identity PRD and misread an attribution requirement (2026-11-02). In soorma-dev's setup, the instruction to put the CLA signature file on `main` contradicted soorma-core's settled practice; the session asked instead of following it (2026-11-21) |
+| 19 | Stale PR descriptions | soorma-core#2's title still named its first stage after it had come to carry all of M1's inception (2026-11-02) |
+| 20 | "Done" can mean local | soorma-core#45's commit sat one ahead of `origin/dev` after the push was refused (2026-11-20) |
+| 21 | Toolchain drift | A stale `PATH` ran an old Node during soorma-core's U2 build until the session noticed (2026-11-08); the local uv was too old to sync soorma-sdk, so a pinned uv was run instead (2026-11-21) |
+| 22 | Third-party behaviour as fact | The draft annotation for `+core.1` claimed it would order after `contract-v0.1.0`, which SemVer contradicts; soorma-core#44 first assumed a Dependabot group would merge directories without `group-by` (2026-11-20) |
+| 23 | Settings belong to the human | The session that created `soorma-ai/cla-assistant-action` stopped before protecting it; the protection was applied and read back from the review side (2026-11-20). soorma-dev's rulesets and Actions policy were applied by the human after the scaffold (2026-11-21) |
+| 24 | Gate order | soorma-core#2 was kept open past an earlier recommendation to merge it, because the initiative's Inception PR gate came after Units Generation (2026-11-02) |
+| 25 | Shared memory | A scripted replacement in the shared memory index changed nothing, because the other session had rewritten the line in the meantime (2026-11-21) |
+| 26 | Decisions the human hasn't made | The first trial of this plugin, reviewing the session that built it, wrote an instruction block that presented fixes as the human's decisions before the human had decided anything (2026-11-21) |
