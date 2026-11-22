@@ -37,6 +37,7 @@ project records them, are in that project's reference folder.
 27. [Predicted identifiers](#27-predicted-identifiers)
 28. [Claiming versus checking](#28-claiming-versus-checking)
 29. [Project state lives in the repositories](#29-project-state-lives-in-the-repositories)
+30. [The generator's recommendation](#30-the-generators-recommendation)
 
 ## 1. Closing keywords
 
@@ -445,3 +446,25 @@ status in the present tense. Read the source when you need the state.
 **Evidence:** a memory note written during the work recorded a repository's branch protection as
 still to be applied; within the hour it was applied, the note was stale, and the other session
 had to correct it.
+
+## 30. The generator's recommendation
+
+**Lesson:** when a generator puts a choice to the human, it gives its recommendation with its
+reasoning. An instruction never tells it to withhold one.
+
+**Why:** the generator has read the specifications, the earlier decisions and the code in
+full; the reviewer has read parts of them. A generator told to present options "without
+answering them" drops the best-informed reasoning the human would have seen, and the human is
+left with the reviewer's less-informed recommendation instead. Hazard 26 keeps the decision
+with the human; that rule concerns what the block states as decided, not whether anyone
+recommends.
+
+**Do:** ask the generator for a recommendation on each choice, with its reasoning and sources,
+marked as its own, and tell it to stop for the human's answer. In your report, set your
+recommendation beside the generator's, check its reasoning against its sources, and say where
+it is better than yours.
+
+**Evidence:** an opening instruction for a specification session told it to put the framing
+questions to the human "without answering them", so it gave no recommendations. A follow-up
+asked for them; its recommendations differed from the reviewer's on three of six questions,
+were better grounded on at least two, and the human chose to answer with them.

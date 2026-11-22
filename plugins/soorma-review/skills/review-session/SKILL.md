@@ -116,7 +116,10 @@ Keep it short and lead with the verdict. In order:
 1. **Verdict**, one or two sentences: sound / needs changes / blocked, and what happens next.
 2. **What I checked**, as bullets with the evidence: commit SHAs, run IDs, PR states.
 3. **Problems**, each with the fix you want.
-4. **Decisions for the human**, each with your recommendation and why.
+4. **Decisions for the human**, each with your recommendation and why. Where the generator
+   has recommended, set yours beside its and say where they differ. It has usually read the
+   sources in full and you have not, so check its reasoning against those sources before you
+   disagree, and say so when its reasoning is the better one.
 5. **Still open**, only if it changed.
 6. **The instruction block** (step 7), last, so it is easy to copy.
 
@@ -178,6 +181,12 @@ The generator reads the block and nothing else of your reply, so it must stand a
   where they gave them. A choice the human hasn't made yet is not a decision: ask first, or put
   it in the block as your recommendation, marked as awaiting their decision. The generator acts
   on whatever the block states as decided.
+- **Ask for the generator's recommendations.** When the generator will put a choice to the
+  human, ask it for its recommendation on each one, with its reasoning and sources, marked as
+  its own. Never tell it to withhold one ("without answering them", "make no
+  recommendation"). It has read the sources in full, so its reasoning is usually the
+  best-informed the human will see. Keeping a decision with the human means the generator
+  stops for the answer, not that it stays silent.
 - **Then numbered steps**, each one small enough to check.
 - **Put explicit STOP points** where the human must look or decide, and say what is out of
   bounds: no merging, no tags, no settings, no fixes pushed past a failing gate.
@@ -229,6 +238,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 27. Don't predict identifiers: no PR number, run ID or SHA before it exists.
 28. Separate claiming from checking: never claim another actor's action, always verify its result.
 29. Project state lives in the repositories, not in the skill or in memory.
+30. Keeping a decision with the human never means silencing the generator's recommendation.
 
 ## Reference files
 
