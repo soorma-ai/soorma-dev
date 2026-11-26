@@ -38,6 +38,7 @@ project records them, are in that project's reference folder.
 28. [Claiming versus checking](#28-claiming-versus-checking)
 29. [Project state lives in the repositories](#29-project-state-lives-in-the-repositories)
 30. [The generator's recommendation](#30-the-generators-recommendation)
+31. [Instruction blocks that reword the workflow's rules](#31-instruction-blocks-that-reword-the-workflows-rules)
 
 ## 1. Closing keywords
 
@@ -473,3 +474,25 @@ it is better than yours.
 questions to the human "without answering them", so it gave no recommendations. A follow-up
 asked for them; its recommendations differed from the reviewer's on three of six questions,
 were better grounded on at least two, and the human chose to answer with them.
+
+## 31. Instruction blocks that reword the workflow's rules
+
+**Lesson:** when the generator runs a workflow with rules of its own, an instruction block that
+restates those rules from memory becomes a second rulebook, and the generator follows the block.
+
+**Why:** the reviewer reads the sections it checks, not every rule file the generator loads, so
+its paraphrase drifts: stricter than the rule, looser, or credited to a rule that doesn't exist.
+The generator then either obeys the block against its own rules or stops to ask, and either way
+a round trip is lost. Hazard 26 governs what a block calls decided; this one governs what it
+calls a rule.
+
+**Do:** read the stage's section of the generator's rules before writing the block. Restate a
+workflow rule only as a reminder, citing its section, never stricter. Label the review's own
+constraints and the human's decisions as theirs. Add a precedence line: where the block
+conflicts with the rules, the rules win, and the generator stops and reports the conflict.
+
+**Evidence:** in one day, two blocks contradicted the generator's rules. One told it to put
+questions to the human without recommendations, which its rules allow. The other forbade
+closing phrases even in artifact text, where its rules require them for an intended close, and
+the generator amended an approved artifact before the conflict was found. Later blocks
+credited a gate item to the workflow's rules that none of its rule files contained.

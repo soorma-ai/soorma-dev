@@ -209,8 +209,22 @@ The generator reads the block and nothing else of your reply, so it must stand a
   action (your merge, the human's tag or setting) as its own work, but let it verify that
   action's result itself. "Don't re-check the merge" throws away a check; "don't claim the
   merge" keeps the record straight.
-- **Restate the rules that bite**: refer to issues as "for #N", never with a closing keyword;
-  the project's commit trailers; bash for wait scripts.
+- **Say where each constraint comes from.** A generator running a workflow already loads that
+  workflow's rules, so the block must not become a second rulebook that competes with them.
+  Before writing a block for a stage, read that stage's section of the generator's rules.
+  Then give each constraint its source:
+  - **the workflow's own rule**: restate it only as a reminder, citing its section, and never
+    reword it into something stricter;
+  - **this review procedure, or the human's ownership** (no merging, tagging or settings
+    changes; hazards 8, 9, 23), which the workflow may not say: label it as the review's;
+  - **the human's own decision**, such as pacing ("don't start the next stage until told"):
+    label it as the human's.
+
+  The rules that bite most often still belong in the block, with their source: refer to
+  issues as "for #N", never with a closing keyword; the project's commit trailers; bash for
+  wait scripts.
+- **Add a precedence line**: where the block conflicts with the generator's rules, the rules
+  win, and the generator stops and reports the conflict rather than following either silently.
 - **Make the first line distinctive**, so the next extraction can anchor on it.
 - Put the block in one fenced `text` block, with no fence nested inside it.
 
@@ -249,6 +263,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 28. Separate claiming from checking: never claim another actor's action, always verify its result.
 29. Project state lives in the repositories, not in the skill or in memory.
 30. Keeping a decision with the human never means silencing the generator's recommendation.
+31. An instruction block restates the generator's own rules only with their source, never stricter.
 
 ## Reference files
 
