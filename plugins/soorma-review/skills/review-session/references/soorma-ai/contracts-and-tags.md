@@ -34,6 +34,20 @@ soorma-sdk vendors soorma-core's `contract/` at one tag:
   whatever the new revision answers. It needs the tag to exist first; never re-pin to a commit
   on `main`.
 
+## soorma-prd's PRD tags
+
+soorma-prd is private, so these tags are *(access-required)*.
+
+- **An approved PRD** is tagged `prd-{initiative}-v{version}` on the merge commit of the PR that
+  approved it, as an annotated tag whose message reads "{Plane} plane PRD v{version} — approved
+  via PR #{n}".
+- **When the approving PR also amends an earlier PRD**, both PRDs are tagged on that merge
+  commit. The amended PRD's message says what amended it ("… amended with the Memory plane
+  PRD, approved via PR #{n}").
+- **Briefs and builds cite PRDs at these tags**, never at a commit on `main`. Tags never move
+  (hazard 8). The rule is the spine's *Stage 3.2b* step 7 and *An approved PRD amended by a
+  later PRD* (see [methodology.md](methodology.md)).
+
 ## Questions a contract leaves open
 
 When soorma-sdk's work finds a question soorma-core's contract doesn't answer, it is raised
