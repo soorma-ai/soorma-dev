@@ -16,7 +16,7 @@ project records them, are in that project's reference folder.
 6. [Bot commands](#6-bot-commands)
 7. [Secrets in scratch files](#7-secrets-in-scratch-files)
 8. [Published tags never move](#8-published-tags-never-move)
-9. [The generator never merges](#9-the-generator-never-merges)
+9. [The generator never merges or tags](#9-the-generator-never-merges-or-tags)
 10. [Unproven explanations](#10-unproven-explanations)
 11. [Bare issue references across repositories](#11-bare-issue-references-across-repositories)
 12. [Required-check names](#12-required-check-names)
@@ -54,6 +54,10 @@ and even when a line break separates the keyword from the reference.
 comment or commit message, run `scripts/closing_keywords.py` on it; it checks the text as
 written and with line breaks joined. Before every merge, `closingIssuesReferences` must be `[]`
 unless closing is intended.
+
+Where closing is intended, because the generator's workflow means this PR to close an issue,
+leave it alone: don't tell the generator to remove the closing phrase. Check instead that
+`closingIssuesReferences` lists exactly the issues meant to close, and no others.
 
 **Evidence:** a merged PR whose description said an amendment "resolves" a gap closed the gap's
 issue weeks early; later, two draft bodies saying "doesn't close #N" were caught before posting.
@@ -160,23 +164,28 @@ cache it, and compare against it.
 **Why:** moving or recreating a tag breaks every consumer that recorded the old target, and
 nothing tells them.
 
-**Do:** publish a new tag instead (for example a revision suffix). Write the annotation to a
-file, show it to the human, create the tag from that file unchanged, push only that tag (never
+**Do:** publish a new tag instead (for example a revision suffix). Create any tag only on the
+human's confirmation of that tag (hazard 9). Write the annotation to a file, show it to the
+human, create the tag from that file unchanged, push only that tag (never
 `--tags`), and re-check that every earlier tag still points where it did.
 
 **Evidence:** a contract release needed a fix; it went out as a new revision tag, and the
 original tag was verified unchanged after each push.
 
-## 9. The generator never merges
+## 9. The generator never merges or tags
 
-**Lesson:** merging is the human's decision, carried out with the reviewer; the generator stops
-when its PR is ready and records nothing as merged until the code host shows it merged.
+**Lesson:** merging and tagging are the human's decisions. Where the reviewer carries them out,
+it does so only on the human's confirmation of that merge or that tag. The generator stops when
+its PR is ready, and records nothing as merged or tagged until the code host shows it.
 
-**Why:** a merge is the gate the whole review exists for. A generator told "merged" before the
-merge either records false state or stops and costs a round trip.
+**Why:** a merge is the gate the whole review exists for, and a published tag can't be taken
+back (hazard 8). A generator told "merged" before the merge either records false state or stops
+and costs a round trip.
 
 **Do:** the reviewer runs the pre-merge checklist, the human confirms, the reviewer merges and
-verifies, and only then does the instruction block say "merged as `<sha>`".
+verifies, and only then does the instruction block say "merged as `<sha>`". A tag follows the
+same path: the human confirms that tag, then the reviewer creates it, pushes it alone, and
+verifies it before reporting it.
 
 **Evidence:** twice, a generator was told a PR was merged when it wasn't; both times it checked,
 found the PR open, and stopped.

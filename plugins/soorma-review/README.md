@@ -15,8 +15,8 @@ Work is split between three roles:
   generator's transcript, extracts what happened since its last instruction, checks the claims
   against git, GitHub and CI, and reports.
 - **Human approver**: owns merges, tags, settings, legal text and decisions. The reviewer merges
-  only on the human's confirmation, then hands the generator a paste-ready instruction block
-  with explicit STOP points.
+  or tags only on the human's confirmation of that merge or tag, then hands the generator a
+  paste-ready instruction block with explicit STOP points.
 
 The skill's procedure is generic. What is particular to soorma.ai's repositories (branch flow,
 required checks, contract tags, where the methodology lives) is in
@@ -73,7 +73,9 @@ The plugin is loaded in place: after editing it, run `/reload-plugins` in that s
   memory per starting directory, and the reviewer's notes (merges, decisions, open items) are
   what let the next review pick up where the last one stopped. Started from a different
   directory, it has none of them and begins a separate memory store. Before its first review it
-  reads its memory index, if one exists.
+  reads its memory index, if one exists. A new reviewer session for each major piece of work
+  (a stage, a milestone step) works well: each starts with a fresh context, and they all share
+  the notes kept for that directory.
 
 ### The loop
 
@@ -84,11 +86,13 @@ The plugin is loaded in place: after editing it, run `/reload-plugins` in that s
 3. **You type "review the session work"** in the reviewer, or `/soorma-review:review-session`.
 4. **The reviewer reports**: what it checked against git, GitHub and CI, the problems it found,
    and the decisions it needs from you. When a PR is ready it runs the pre-merge check and
-   merges **only when you confirm**. Then it hands back the next instruction block, and the
+   merges **only when you confirm**. Then it hands back the next instruction block, every
+   time, with any decision it needs from you in a marked line you edit before pasting. The
    loop starts again at 1.
 
-The reviewer never changes repository settings, never tags, and never merges on its own; the
-generator never merges at all. Those stay with you.
+The reviewer never changes repository settings. It merges or tags only when you confirm that
+merge or that tag, and the generator never merges or tags at all. Those decisions stay with
+you.
 
 ### The first review
 

@@ -15,7 +15,8 @@ Work in software is split between three roles:
 - **Reviewer**: you. You read what the generator did, check it against the real state of the
   repositories, report to the human, and write the generator's next instruction.
 - **Human approver**: owns every decision that is hard to undo or belongs to them: merges,
-  tags, repository and organisation settings, legal text, and choices between options.
+  tags, repository and organisation settings, legal text, and choices between options. Where
+  you carry out a merge or a tag, you do it only on the human's confirmation of that one.
 
 Today a human usually carries your instruction blocks to the generator by pasting them, and
 carries the generator's turns back by asking you to review. A harness may pass them as
@@ -28,8 +29,8 @@ ones: a commit that never left the machine, a check that ran against an old head
 that silently closes an issue, a claim about a specification that the text doesn't support.
 You catch those by checking the claims against sources of truth, not by re-reading the report.
 
-The generator never merges, tags, changes settings, or decides for the human. You merge only
-when the human confirms that specific merge.
+The generator never merges, tags, changes settings, or decides for the human. You merge, or
+create a tag, only when the human confirms that specific merge or tag.
 
 ## Before the first review
 
@@ -81,7 +82,11 @@ python3 -I "${CLAUDE_SKILL_DIR}/scripts/extract_turns.py" <transcript> --anchor 
 
 `--tools` adds one line per command; `--results N` adds each command's output, cut to N
 characters, which is what lets you check a claim against what actually ran. Without an anchor,
-`--last-turns 1` takes the last human turn. Write digests to scratch space, never into a
+`--last-turns 1` takes the last human turn.
+
+Review the generator against the block as it was pasted (the start of its turn in the
+transcript), not against the block you wrote. The human may have edited it, or pasted a
+replacement. If your anchor isn't found, look for what the human changed. Write digests to scratch space, never into a
 repository: transcripts can hold secrets and personal data.
 
 If the generator's context was compacted since your last instruction, the extract shows a
@@ -139,7 +144,7 @@ Keep it short and lead with the verdict. In order:
 Report what the generator did well when it matters to the decision (a good catch, a careful
 probe), not as padding.
 
-### 5. Merge with the human
+### 5. Merge and tag with the human
 
 When a PR is ready, run this checklist, show the result, and ask the human to confirm the merge.
 Each merge needs its own confirmation.
@@ -150,7 +155,7 @@ Each merge needs its own confirmation.
 3. Every required check passed on that head commit, by its exact name.
 4. The checks are fresh: the base the PR was tested against is the base branch's current head.
    If the base moved, update the branch or re-run the checks first.
-5. `closingIssuesReferences` is `[]`, unless the PR is meant to close an issue. Check the body
+5. `closingIssuesReferences` is `[]`, or lists exactly the issues the PR is meant to close. Check the body
    and every commit message for closing keywords, both as written and with line breaks joined:
    `python3 -I "${CLAUDE_SKILL_DIR}/scripts/closing_keywords.py" <file>...`
 6. The project's commit conventions hold (sign-off, attribution trailers).
@@ -161,6 +166,13 @@ branches. Then verify: the PR reads MERGED, the merge commit is on the remote ba
 tree is the tree CI tested when that matters (before a tag), and no issue closed that should
 not have. Only then tell the generator it is merged, quoting the merge commit. A generator told
 "merged" before the merge either records a false state or stops and costs a round trip.
+
+**Tags** belong to the human as merges do. Where the human has you create them, create each
+one only on the human's confirmation of that tag, after the merge it marks is verified: an
+annotated tag on the merge commit, with its message shown to the human first and written in
+the project's form, pushed alone (`git push origin refs/tags/<tag>`, never `--tags`). Then
+check with `git ls-remote --tags origin` that it peels to the merge commit and that no other
+tag moved (hazard 8). The project's tag names and message forms are in its reference folder.
 
 To wait for checks, use the bundled script, which runs under bash whatever the user's shell is:
 `bash "${CLAUDE_SKILL_DIR}/scripts/wait_for_checks.sh" <owner/repo> <pr> [expected-head-sha]`.
@@ -184,6 +196,11 @@ find the state of the work and what has already happened. Keep it accurate rathe
   project directory). Start the reviewer from the same directory each time, or it begins with
   none of its earlier notes and starts a separate store.
 - No secrets, tokens, or personal data in notes.
+- **A lesson about this skill goes to memory, not into the skill.** Record it with its date,
+  trigger and evidence. Don't edit the skill or its references during a review, even for a
+  small fix: the skill changes through its own loop, in which a separate working session folds
+  accumulated lessons into it and a review checks that change. That way no reviewer reviews
+  its own change.
 
 ### 7. Write the next instruction block
 
@@ -244,7 +261,7 @@ The generator reads the block and nothing else of your reply, so it must stand a
 Each line is a lesson that cost a round trip at least once. The reasons and the generic
 evidence are in [references/hazards.md](references/hazards.md); read it before your first review.
 
-1. Closing keywords close issues even when negated or split across lines; write "for #N".
+1. Closing keywords close issues even when negated or split across lines; write "for #N", and leave an intended close alone.
 2. Trusted-trigger workflows run the default branch's copy: prove a change after merge.
 3. zsh-isms: no word splitting, `=word` expansion, `$VAR:x` modifiers, `path` tied to `PATH`.
 4. A refused command is a stop, not an obstacle to route around.
@@ -252,7 +269,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 6. Bot commands: one per comment, spaced out, no attribution line.
 7. Secrets left in scratch files.
 8. Never move or recreate a published tag.
-9. The generator never merges, and never reports a merge it hasn't seen.
+9. The generator never merges or tags, and never reports a merge or tag it hasn't seen; the reviewer does either only on the human's confirmation.
 10. An unproven explanation is recorded as unexplained.
 11. A bare `#N` links to the repository the text is posted in.
 12. Renaming a required-check job blocks every PR; a skipped job counts as passing.

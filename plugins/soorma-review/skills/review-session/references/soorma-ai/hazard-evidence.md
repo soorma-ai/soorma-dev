@@ -15,7 +15,7 @@ soorma-aidlc are private: their references are *(access-required)*. Incidents ar
 | 6 | Bot commands | Three `@dependabot rebase` comments on soorma-core's Dependabot PRs, seconds apart, got one response; `@dependabot recreate` worked (2026-11-20). soorma-core#30 stayed open until Dependabot's next run after soorma-core#42 superseded it |
 | 7 | Secrets in scratch files | During soorma-core maintenance (2026-11-20), a test database's connection file with its password, and a scratch backup of `ci.yml`, were found and deleted |
 | 8 | Published tags | `contract-v0.1.0` stayed on its commit while `+core.1` and `+core.2` were published as new tags, each pushed alone from an approved annotation (2026-11-20) |
-| 9 | The generator never merges | The session building soorma-core's U4 was told soorma-core#18 and #19 were merged before they were; both times it found the PR open and stopped (2026-11-11) |
+| 9 | The generator never merges or tags | The session building soorma-core's U4 was told soorma-core#18 and #19 were merged before they were; both times it found the PR open and stopped (2026-11-11) |
 | 10 | Unproven explanations | soorma-core#33 read as blocked to the gh token but clean anonymously; a token-scope theory was recorded, then disproven when the same token merged it (2026-11-20) |
 | 11 | Bare issue references | The handover saved as soorma-sdk#27 referred to soorma-core's #36 as a bare number; it was qualified before posting (2026-11-21) |
 | 12 | Required-check names | soorma-core's and soorma-dev's workflows carry a comment on each required job. soorma-sdk#28 renamed a job safely because only `Check sign-off` is required there |
