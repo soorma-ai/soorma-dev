@@ -39,6 +39,7 @@ project records them, are in that project's reference folder.
 29. [Project state lives in the repositories](#29-project-state-lives-in-the-repositories)
 30. [The generator's recommendation](#30-the-generators-recommendation)
 31. [Instruction blocks that reword the workflow's rules](#31-instruction-blocks-that-reword-the-workflows-rules)
+32. [Truncated views and negative claims](#32-truncated-views-and-negative-claims)
 
 ## 1. Closing keywords
 
@@ -291,11 +292,14 @@ moved to a file every session loads.
 
 **Do:** invite push-back in your instructions. When the generator disagrees, check its argument
 against the source, and say plainly when you were wrong. Re-check your own earlier claims when
-a later review depends on them.
+a later review depends on them. A rule or wording you propose for the generator's work gets
+the same test as the generator's own: walk it through the real cases before it goes in a block.
 
 **Evidence:** reviews cited a specification section by its title and missed a subsection; a
 generator spotted that an instruction contradicted a settled convention and asked instead of
-following it.
+following it. A precedence rule the reviewer added to a methodology change failed its first
+walkthrough, raised three further gaps without changing any result, and was removed before
+merge.
 
 ## 19. Stale PR titles and descriptions
 
@@ -463,17 +467,23 @@ full; the reviewer has read parts of them. A generator told to present options "
 answering them" drops the best-informed reasoning the human would have seen, and the human is
 left with the reviewer's less-informed recommendation instead. Hazard 26 keeps the decision
 with the human; that rule concerns what the block states as decided, not whether anyone
-recommends.
+recommends. The gap is in how each reads, not in access: both can open the same files, but
+the generator read everything the stage depends on to do the work, while the reviewer reads
+one targeted section per claim, cold each turn, with command output cut short in its extract.
+Selective reading suits checking claims; it doesn't suit design judgement.
 
 **Do:** ask the generator for a recommendation on each choice, with its reasoning and sources,
 marked as its own, and tell it to stop for the human's answer. In your report, set your
-recommendation beside the generator's, check its reasoning against its sources, and say where
-it is better than yours.
+recommendation beside the generator's. Before recommending against it, read in full the
+sources its reasoning cites; if you won't, defer to it and say so. Say where its reasoning is
+better than yours.
 
 **Evidence:** an opening instruction for a specification session told it to put the framing
 questions to the human "without answering them", so it gave no recommendations. A follow-up
 asked for them; its recommendations differed from the reviewer's on three of six questions,
-were better grounded on at least two, and the human chose to answer with them.
+were better grounded on at least two, and the human chose to answer with them. The reviewer's
+weaker recommendation on one of them came from not having read an invariant and a brief
+clause that the generator had read.
 
 ## 31. Instruction blocks that reword the workflow's rules
 
@@ -496,3 +506,23 @@ questions to the human without recommendations, which its rules allow. The other
 closing phrases even in artifact text, where its rules require them for an intended close, and
 the generator amended an approved artifact before the conflict was found. Later blocks
 credited a gate item to the workflow's rules that none of its rule files contained.
+
+## 32. Truncated views and negative claims
+
+**Lesson:** a claim that a source does *not* say something needs the whole text. A view cut to
+a width or a line count (`cut`, `head`, an extract's per-result limit) hides the sentence that
+says it.
+
+**Why:** a positive claim is checked by finding the sentence; a negative one by not finding it.
+A truncated view fails silently, because it looks like the whole section. The reviewer then
+corrects the generator wrongly, and the generator either follows or spends a turn proving the
+text.
+
+**Do:** before reporting that a source doesn't say something, or contradicting the generator
+about what a source says, read the section whole, at the version the work is pinned to. Treat
+command output in a transcript extract as cut: re-run the command or read the file. Say in the
+report when a check rests on a partial read.
+
+**Evidence:** a review cut each line of a specification to 200 characters, missed a
+requirement's last sentence, and called the generator's correct citation wrong. The generator
+showed the full text, and in doing so found a real error elsewhere.

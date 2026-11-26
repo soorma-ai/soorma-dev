@@ -109,6 +109,15 @@ Say plainly which claims you verified and which you are inferring. Re-check your
 statements as well: when the generator pushes back on your instruction, check its argument
 against the source before you repeat yourself. The reviewer is wrong sometimes too.
 
+A claim that a source does *not* say something needs the whole section, not a truncated view.
+Command output in the extract is cut to `--results` characters, so re-run the command or read
+the file before you contradict the generator about what a source says (hazard 32).
+
+List the choices the generator made without asking. This is the review's own check, whether or
+not the generator's workflow asks it to list them. For each, say whether it was the
+generator's to make or the human's, and put the human's under *Decisions for the human*,
+especially where earlier, similar work put the same kind of question to the human.
+
 ### 4. Report
 
 Keep it short and lead with the verdict. In order:
@@ -117,9 +126,11 @@ Keep it short and lead with the verdict. In order:
 2. **What I checked**, as bullets with the evidence: commit SHAs, run IDs, PR states.
 3. **Problems**, each with the fix you want.
 4. **Decisions for the human**, each with your recommendation and why. Where the generator
-   has recommended, set yours beside its and say where they differ. It has usually read the
-   sources in full and you have not, so check its reasoning against those sources before you
-   disagree, and say so when its reasoning is the better one.
+   has recommended, set yours beside its and say where they differ. It read everything the
+   work depends on; you read selectively, to check claims, which suits checking and not
+   design judgement. Before you recommend against it, read in full the sources its reasoning
+   cites; if you haven't, defer to its recommendation and say so. Say so too when its
+   reasoning is the better one.
 5. **Still open**, only if it changed.
 6. **The instruction block** (step 7), last, so it is easy to copy. Always write one, even
    when the next step is only the human's answer or approval: the block is the one message
@@ -250,7 +261,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 15. A missing commit trailer means rewriting history.
 16. The work branch must contain the base branch before you commit.
 17. A rule placed where it isn't loaded never applies.
-18. The reviewer can be wrong; invite push-back and re-check.
+18. The reviewer can be wrong; invite push-back, re-check, and test the rules you propose.
 19. PR titles and descriptions go stale as scope grows.
 20. "Done" can mean committed locally.
 21. Local tool versions drift from the project's pins.
@@ -262,8 +273,9 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 27. Don't predict identifiers: no PR number, run ID or SHA before it exists.
 28. Separate claiming from checking: never claim another actor's action, always verify its result.
 29. Project state lives in the repositories, not in the skill or in memory.
-30. Keeping a decision with the human never means silencing the generator's recommendation.
+30. Keeping a decision with the human never means silencing the generator's recommendation; disagree only after reading its sources in full.
 31. An instruction block restates the generator's own rules only with their source, never stricter.
+32. "The source doesn't say X" needs the whole text; a truncated view hides the sentence that does.
 
 ## Reference files
 
