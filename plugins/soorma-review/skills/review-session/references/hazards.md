@@ -16,7 +16,7 @@ project records them, are in that project's reference folder.
 6. [Bot commands](#6-bot-commands)
 7. [Secrets in scratch files](#7-secrets-in-scratch-files)
 8. [Published tags never move](#8-published-tags-never-move)
-9. [The generator never merges](#9-the-generator-never-merges)
+9. [The generator never merges or tags](#9-the-generator-never-merges-or-tags)
 10. [Unproven explanations](#10-unproven-explanations)
 11. [Bare issue references across repositories](#11-bare-issue-references-across-repositories)
 12. [Required-check names](#12-required-check-names)
@@ -37,6 +37,9 @@ project records them, are in that project's reference folder.
 27. [Predicted identifiers](#27-predicted-identifiers)
 28. [Claiming versus checking](#28-claiming-versus-checking)
 29. [Project state lives in the repositories](#29-project-state-lives-in-the-repositories)
+30. [The generator's recommendation](#30-the-generators-recommendation)
+31. [Instruction blocks that reword the workflow's rules](#31-instruction-blocks-that-reword-the-workflows-rules)
+32. [Truncated views and negative claims](#32-truncated-views-and-negative-claims)
 
 ## 1. Closing keywords
 
@@ -51,6 +54,10 @@ and even when a line break separates the keyword from the reference.
 comment or commit message, run `scripts/closing_keywords.py` on it; it checks the text as
 written and with line breaks joined. Before every merge, `closingIssuesReferences` must be `[]`
 unless closing is intended.
+
+Where closing is intended, because the generator's workflow means this PR to close an issue,
+leave it alone: don't tell the generator to remove the closing phrase. Check instead that
+`closingIssuesReferences` lists exactly the issues meant to close, and no others.
 
 **Evidence:** a merged PR whose description said an amendment "resolves" a gap closed the gap's
 issue weeks early; later, two draft bodies saying "doesn't close #N" were caught before posting.
@@ -157,23 +164,28 @@ cache it, and compare against it.
 **Why:** moving or recreating a tag breaks every consumer that recorded the old target, and
 nothing tells them.
 
-**Do:** publish a new tag instead (for example a revision suffix). Write the annotation to a
-file, show it to the human, create the tag from that file unchanged, push only that tag (never
+**Do:** publish a new tag instead (for example a revision suffix). Create any tag only on the
+human's confirmation of that tag (hazard 9). Write the annotation to a file, show it to the
+human, create the tag from that file unchanged, push only that tag (never
 `--tags`), and re-check that every earlier tag still points where it did.
 
 **Evidence:** a contract release needed a fix; it went out as a new revision tag, and the
 original tag was verified unchanged after each push.
 
-## 9. The generator never merges
+## 9. The generator never merges or tags
 
-**Lesson:** merging is the human's decision, carried out with the reviewer; the generator stops
-when its PR is ready and records nothing as merged until the code host shows it merged.
+**Lesson:** merging and tagging are the human's decisions. Where the reviewer carries them out,
+it does so only on the human's confirmation of that merge or that tag. The generator stops when
+its PR is ready, and records nothing as merged or tagged until the code host shows it.
 
-**Why:** a merge is the gate the whole review exists for. A generator told "merged" before the
-merge either records false state or stops and costs a round trip.
+**Why:** a merge is the gate the whole review exists for, and a published tag can't be taken
+back (hazard 8). A generator told "merged" before the merge either records false state or stops
+and costs a round trip.
 
 **Do:** the reviewer runs the pre-merge checklist, the human confirms, the reviewer merges and
-verifies, and only then does the instruction block say "merged as `<sha>`".
+verifies, and only then does the instruction block say "merged as `<sha>`". A tag follows the
+same path: the human confirms that tag, then the reviewer creates it, pushes it alone, and
+verifies it before reporting it.
 
 **Evidence:** twice, a generator was told a PR was merged when it wasn't; both times it checked,
 found the PR open, and stopped.
@@ -289,11 +301,14 @@ moved to a file every session loads.
 
 **Do:** invite push-back in your instructions. When the generator disagrees, check its argument
 against the source, and say plainly when you were wrong. Re-check your own earlier claims when
-a later review depends on them.
+a later review depends on them. A rule or wording you propose for the generator's work gets
+the same test as the generator's own: walk it through the real cases before it goes in a block.
 
 **Evidence:** reviews cited a specification section by its title and missed a subsection; a
 generator spotted that an instruction contradicted a settled convention and asked instead of
-following it.
+following it. A precedence rule the reviewer added to a methodology change failed its first
+walkthrough, raised three further gaps without changing any result, and was removed before
+merge.
 
 ## 19. Stale PR titles and descriptions
 
@@ -388,9 +403,14 @@ written as "the human's decision" becomes one without the human having made it, 
 the generator keeps says the human chose it.
 
 **Do:** before writing the block, separate what the human decided from what you recommend. For
-an open choice, ask the human first; or, if the block has to go now, write the item as your
-recommendation, marked as awaiting the human's decision, and tell the generator to stop before
-acting on it.
+an open choice, ask the human first, or give it a decision slot: a marked line the human edits
+before pasting, prefilled with your recommendation, or left empty where the human's own words
+are required. The line as pasted is the human's decision; your report still calls it a
+recommendation. Have the generator record the whole pasted block as the human's input, not
+only the slot, and stop for the answer wherever the block has no slot for it.
+
+A slot works the same whether a human carries the block or a harness passes it: either way the
+decision has one marked place, and it is the human's to fill.
 
 **Evidence:** a trial review's instruction block listed two fixes under the human's decisions,
 to be made before the merge, when the human had not yet decided anything.
@@ -445,3 +465,73 @@ status in the present tense. Read the source when you need the state.
 **Evidence:** a memory note written during the work recorded a repository's branch protection as
 still to be applied; within the hour it was applied, the note was stale, and the other session
 had to correct it.
+
+## 30. The generator's recommendation
+
+**Lesson:** when a generator puts a choice to the human, it gives its recommendation with its
+reasoning. An instruction never tells it to withhold one.
+
+**Why:** the generator has read the specifications, the earlier decisions and the code in
+full; the reviewer has read parts of them. A generator told to present options "without
+answering them" drops the best-informed reasoning the human would have seen, and the human is
+left with the reviewer's less-informed recommendation instead. Hazard 26 keeps the decision
+with the human; that rule concerns what the block states as decided, not whether anyone
+recommends. The gap is in how each reads, not in access: both can open the same files, but
+the generator read everything the stage depends on to do the work, while the reviewer reads
+one targeted section per claim, cold each turn, with command output cut short in its extract.
+Selective reading suits checking claims; it doesn't suit design judgement.
+
+**Do:** ask the generator for a recommendation on each choice, with its reasoning and sources,
+marked as its own, and tell it to stop for the human's answer. In your report, set your
+recommendation beside the generator's. Before recommending against it, read in full the
+sources its reasoning cites; if you won't, defer to it and say so. Say where its reasoning is
+better than yours.
+
+**Evidence:** an opening instruction for a specification session told it to put the framing
+questions to the human "without answering them", so it gave no recommendations. A follow-up
+asked for them; its recommendations differed from the reviewer's on three of six questions,
+were better grounded on at least two, and the human chose to answer with them. The reviewer's
+weaker recommendation on one of them came from not having read an invariant and a brief
+clause that the generator had read.
+
+## 31. Instruction blocks that reword the workflow's rules
+
+**Lesson:** when the generator runs a workflow with rules of its own, an instruction block that
+restates those rules from memory becomes a second rulebook, and the generator follows the block.
+
+**Why:** the reviewer reads the sections it checks, not every rule file the generator loads, so
+its paraphrase drifts: stricter than the rule, looser, or credited to a rule that doesn't exist.
+The generator then either obeys the block against its own rules or stops to ask, and either way
+a round trip is lost. Hazard 26 governs what a block calls decided; this one governs what it
+calls a rule.
+
+**Do:** read the stage's section of the generator's rules before writing the block. Restate a
+workflow rule only as a reminder, citing its section, never stricter. Label the review's own
+constraints and the human's decisions as theirs. Add a precedence line: where the block
+conflicts with the rules, the rules win, and the generator stops and reports the conflict.
+
+**Evidence:** in one day, two blocks contradicted the generator's rules. One told it to put
+questions to the human without recommendations, which its rules allow. The other forbade
+closing phrases even in artifact text, where its rules require them for an intended close, and
+the generator amended an approved artifact before the conflict was found. Later blocks
+credited a gate item to the workflow's rules that none of its rule files contained.
+
+## 32. Truncated views and negative claims
+
+**Lesson:** a claim that a source does *not* say something needs the whole text. A view cut to
+a width or a line count (`cut`, `head`, an extract's per-result limit) hides the sentence that
+says it.
+
+**Why:** a positive claim is checked by finding the sentence; a negative one by not finding it.
+A truncated view fails silently, because it looks like the whole section. The reviewer then
+corrects the generator wrongly, and the generator either follows or spends a turn proving the
+text.
+
+**Do:** before reporting that a source doesn't say something, or contradicting the generator
+about what a source says, read the section whole, at the version the work is pinned to. Treat
+command output in a transcript extract as cut: re-run the command or read the file. Say in the
+report when a check rests on a partial read.
+
+**Evidence:** a review cut each line of a specification to 200 characters, missed a
+requirement's last sentence, and called the generator's correct citation wrong. The generator
+showed the full text, and in doing so found a real error elsewhere.

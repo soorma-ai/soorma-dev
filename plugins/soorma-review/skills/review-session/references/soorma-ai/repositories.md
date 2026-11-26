@@ -22,6 +22,8 @@ organisation profile) follow the same branch flow.
   `origin/main` (hazard 16).
 - **Merges are merge commits** (`gh pr merge N --merge`), run from the review side with the
   human's confirmation. `dev` is never deleted.
+- **Tags** (contract and PRD tags) are created from the review side too, each only on the
+  human's confirmation of that tag, and pushed alone. See [contracts-and-tags.md](contracts-and-tags.md).
 - **After a merge**, `dev` is fast-forwarded to the merge commit and pushed.
 - **A docs-only commit left on `dev`** after a merge (an initiative's close-out record, say)
   rides with that repository's next PR; it doesn't need a PR of its own.
