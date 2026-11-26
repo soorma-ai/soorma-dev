@@ -389,9 +389,14 @@ written as "the human's decision" becomes one without the human having made it, 
 the generator keeps says the human chose it.
 
 **Do:** before writing the block, separate what the human decided from what you recommend. For
-an open choice, ask the human first; or, if the block has to go now, write the item as your
-recommendation, marked as awaiting the human's decision, and tell the generator to stop before
-acting on it.
+an open choice, ask the human first, or give it a decision slot: a marked line the human edits
+before pasting, prefilled with your recommendation, or left empty where the human's own words
+are required. The line as pasted is the human's decision; your report still calls it a
+recommendation. Have the generator record the whole pasted block as the human's input, not
+only the slot, and stop for the answer wherever the block has no slot for it.
+
+A slot works the same whether a human carries the block or a harness passes it: either way the
+decision has one marked place, and it is the human's to fill.
 
 **Evidence:** a trial review's instruction block listed two fixes under the human's decisions,
 to be made before the merge, when the human had not yet decided anything.

@@ -121,7 +121,9 @@ Keep it short and lead with the verdict. In order:
    sources in full and you have not, so check its reasoning against those sources before you
    disagree, and say so when its reasoning is the better one.
 5. **Still open**, only if it changed.
-6. **The instruction block** (step 7), last, so it is easy to copy.
+6. **The instruction block** (step 7), last, so it is easy to copy. Always write one, even
+   when the next step is only the human's answer or approval: the block is the one message
+   that carries the work forward, whether a human pastes it or a harness passes it.
 
 Report what the generator did well when it matters to the decision (a good catch, a careful
 probe), not as padding.
@@ -178,9 +180,17 @@ The generator reads the block and nothing else of your reply, so it must stand a
 
 - **Start with the verified state**: "#12 is merged as `abc1234`", "the tag is pushed".
 - **Then the human's decisions**: only what the human actually decided, in their own words
-  where they gave them. A choice the human hasn't made yet is not a decision: ask first, or put
-  it in the block as your recommendation, marked as awaiting their decision. The generator acts
-  on whatever the block states as decided.
+  where they gave them. A choice the human hasn't made yet is not a decision: ask first, or
+  give it a decision slot (next bullet). The generator acts on whatever the block states as
+  decided.
+- **Give the human's decision a slot.** When the next step waits on the human, put a clearly
+  marked line near the top of the block, such as `Human's answer (edit before pasting): ...`,
+  prefilled with the recommendation your report gives. The human edits it before pasting, so
+  the line as pasted is their decision; your report still calls it a recommendation. Where
+  the human's own words are required (an acknowledgment, a sign-off), leave the line empty
+  with a placeholder instead. Tell the generator to record the whole pasted block as the
+  human's input, wherever its workflow records human input, and to name the slot's answer in
+  its reply. Recording only the slot drops the rest of what the human sent.
 - **Ask for the generator's recommendations.** When the generator will put a choice to the
   human, ask it for its recommendation on each one, with its reasoning and sources, marked as
   its own. Never tell it to withhold one ("without answering them", "make no
@@ -234,7 +244,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 23. Settings and organisation actions belong to the human.
 24. Gate order: a PR that a later gate reviews stays open until that gate.
 25. Shared memory edited by more than one session.
-26. An instruction block states as decided only what the human decided.
+26. An instruction block states as decided only what the human decided; an open choice goes in a slot the human edits.
 27. Don't predict identifiers: no PR number, run ID or SHA before it exists.
 28. Separate claiming from checking: never claim another actor's action, always verify its result.
 29. Project state lives in the repositories, not in the skill or in memory.
