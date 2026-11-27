@@ -87,8 +87,9 @@ The plugin is loaded in place: after editing it, run `/reload-plugins` in that s
 4. **The reviewer reports**: what it checked against git, GitHub and CI, the problems it found,
    and the decisions it needs from you. When a PR is ready it runs the pre-merge check and
    merges **only when you confirm**. Then it hands back the next instruction block, every
-   time, with any decision it needs from you in a marked line you edit before pasting. The
-   loop starts again at 1.
+   time. Any decision it needs from you is on the block's one line starting
+   `HUMAN DECISION:`, prefilled with its recommendation: edit that line before pasting, and
+   the line as pasted is your decision. The loop starts again at 1.
 
 The reviewer never changes repository settings. It merges or tags only when you confirm that
 merge or that tag, and the generator never merges or tags at all. Those decisions stay with
