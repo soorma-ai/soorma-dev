@@ -213,5 +213,90 @@ class ExtractTurns(unittest.TestCase):
         self.assertNotIn("Traceback", err)
 
 
+class SessionById(unittest.TestCase):
+    SID = "0a1b2c3d-0000-4000-8000-000000000001"
+
+    def setUp(self):
+        self.root = tempfile.TemporaryDirectory()
+        self.addCleanup(self.root.cleanup)
+        self.folder = os.path.join(self.root.name, "-work-primary")
+        os.mkdir(self.folder)
+        self.write(self.folder, self.SID, "ANCHOR-LINE handed over")
+
+    def write(self, folder, sid, prompt):
+        with open(os.path.join(folder, f"{sid}.jsonl"), "w", encoding="utf-8") as f:
+            f.write(json.dumps(rec("user", prompt, "2026-01-05T00:00:00Z")) + "\n")
+            f.write(json.dumps(rec("assistant", [{"type": "text", "text": "Done."}],
+                                   "2026-01-05T00:00:01Z")) + "\n")
+
+    def run_main(self, *args):
+        out, err = io.StringIO(), io.StringIO()
+        old = sys.stdout, sys.stderr
+        sys.stdout, sys.stderr = out, err
+        try:
+            code = et.main(list(args))
+        finally:
+            sys.stdout, sys.stderr = old
+        return code, out.getvalue(), err.getvalue()
+
+    def test_session_resolves_and_extracts(self):
+        code, out, err = self.run_main("--session", self.SID, "--root", self.root.name,
+                                       "--anchor", "ANCHOR-LINE")
+        self.assertEqual(code, 0)
+        self.assertIn("ANCHOR-LINE handed over", out)
+        self.assertIn("Done.", out)
+
+    def test_extraction_reports_the_session_on_stderr(self):
+        path = os.path.join(self.folder, f"{self.SID}.jsonl")
+        for args in (("--session", self.SID, "--root", self.root.name), (path,)):
+            with self.subTest(args=args):
+                code, out, err = self.run_main(*args)
+                self.assertEqual(code, 0)
+                self.assertIn(f"transcript: {path}", err)
+                self.assertIn("cwd=/work/repo branch=dev last=2026-01-05T00:00:01", err)
+                self.assertNotIn("transcript:", out)
+
+    def test_session_not_found_exits_1(self):
+        code, out, err = self.run_main("--session", "missing", "--root", self.root.name)
+        self.assertEqual(code, 1)
+        self.assertEqual(out, "")
+        self.assertIn("no transcript named missing.jsonl", err)
+
+    def test_session_in_two_folders_is_ambiguous(self):
+        other = os.path.join(self.root.name, "-work-secondary")
+        os.mkdir(other)
+        self.write(other, self.SID, "the same ID elsewhere")
+        code, out, err = self.run_main("--session", self.SID, "--root", self.root.name)
+        self.assertEqual(code, 1)
+        self.assertEqual(out, "")
+        self.assertIn("2 transcripts", err)
+        self.assertIn("-work-primary", err)
+        self.assertIn("-work-secondary", err)
+
+    def test_session_id_must_be_a_bare_name(self):
+        outside = os.path.join(self.root.name, "outside.jsonl")
+        self.write(self.root.name, "outside", "must not be read")
+        self.assertTrue(os.path.exists(outside))
+        # Without the check, "../outside" would resolve from -work-primary to that file.
+        for bad in ("../outside", "-work-primary/" + self.SID, ".hidden", ""):
+            with self.subTest(bad=bad):
+                code, out, err = self.run_main(f"--session={bad}", "--root", self.root.name)
+                self.assertEqual(code, 1)
+                self.assertEqual(out, "")
+                self.assertNotIn("must not be read", out + err)
+
+    def test_session_and_path_together_is_an_error(self):
+        path = os.path.join(self.folder, f"{self.SID}.jsonl")
+        err = io.StringIO()
+        old, sys.stderr = sys.stderr, err
+        try:
+            with self.assertRaises(SystemExit) as cm:
+                et.main([path, "--session", self.SID, "--root", self.root.name])
+        finally:
+            sys.stderr = old
+        self.assertEqual(cm.exception.code, 2)
+        self.assertIn("not both", err.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -52,7 +52,22 @@ One review covers one generator turn: everything since your last instruction.
 Read the transcript rather than relying on what the human relays: it holds the commands the
 generator ran and what they returned, not just its summary. Where transcripts live depends on
 the agent; for Claude Code see [references/transcripts-claude-code.md](references/transcripts-claude-code.md).
-To list candidates with their working directory, branch, last activity and first prompt:
+
+**If you were handed the generator's session**, by a harness or by the human, use it directly
+and skip the listing. That means its session ID or transcript path, together with the anchor.
+For Claude Code, pass the ID as `--session <ID>` in step 2's command, in place of the
+transcript path. Still confirm three things:
+
+- the working directory and branch match the work (the extractor prints them);
+- the session isn't your own;
+- the anchor is the first line of your last block. If it isn't, the human edited or replaced
+  the block: review against what was sent (step 2) and say so in your report.
+
+A handed identifier is observed, not predicted (hazard 27). If it doesn't resolve, stop and
+ask; don't fall back to guessing from the listing.
+
+Otherwise, list candidates with their working directory, branch, last activity and first
+prompt:
 
 ```sh
 python3 -I "${CLAUDE_SKILL_DIR}/scripts/extract_turns.py" --list ~/.claude/projects
