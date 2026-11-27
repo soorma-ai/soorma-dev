@@ -52,7 +52,22 @@ One review covers one generator turn: everything since your last instruction.
 Read the transcript rather than relying on what the human relays: it holds the commands the
 generator ran and what they returned, not just its summary. Where transcripts live depends on
 the agent; for Claude Code see [references/transcripts-claude-code.md](references/transcripts-claude-code.md).
-To list candidates with their working directory, branch, last activity and first prompt:
+
+**If you were handed the generator's session**, by a harness or by the human, use it directly
+and skip the listing. That means its session ID or transcript path, together with the anchor.
+For Claude Code, pass the ID as `--session <ID>` in step 2's command, in place of the
+transcript path. Still confirm three things:
+
+- the working directory and branch match the work (the extractor prints them);
+- the session isn't your own;
+- the anchor is the first line of your last block. If it isn't, the human edited or replaced
+  the block: review against what was sent (step 2) and say so in your report.
+
+A handed identifier is observed, not predicted (hazard 27). If it doesn't resolve, stop and
+ask; don't fall back to guessing from the listing.
+
+Otherwise, list candidates with their working directory, branch, last activity and first
+prompt:
 
 ```sh
 python3 -I "${CLAUDE_SKILL_DIR}/scripts/extract_turns.py" --list ~/.claude/projects
@@ -107,7 +122,7 @@ List the claims the turn makes, then check each against its source of truth. Fet
 | "Only X changed" | `git diff --stat <base>..<head>`, and the diff itself for anything that matters |
 | "Merged" | the PR's state is MERGED and the merge commit is on the base branch of the remote |
 | "The spec says ..." | the specification at the version the work is pinned to, not at its main branch |
-| "The tool behaves like ..." | the tool's documentation, or a test; otherwise it is inference and is labelled so |
+| "The tool behaves like ..." | its code at the pinned commit, where you can read it; otherwise its documentation, or a test; otherwise it is inference and is labelled so. A README is a summary and can omit a mode |
 | "Deleted the secret" / "stopped the container" | look: the file is gone, the process is gone |
 
 Say plainly which claims you verified and which you are inferring. Re-check your own earlier
@@ -139,7 +154,8 @@ Keep it short and lead with the verdict. In order:
 5. **Still open**, only if it changed.
 6. **The instruction block** (step 7), last, so it is easy to copy. Always write one, even
    when the next step is only the human's answer or approval: the block is the one message
-   that carries the work forward, whether a human pastes it or a harness passes it.
+   that carries the work forward, whether a human pastes it or a harness passes it. The
+   human's answer or approval goes on the block's `HUMAN DECISION:` line.
 
 Report what the generator did well when it matters to the decision (a good catch, a careful
 probe), not as padding.
@@ -206,19 +222,29 @@ find the state of the work and what has already happened. Keep it accurate rathe
 
 The generator reads the block and nothing else of your reply, so it must stand alone.
 
-- **Start with the verified state**: "#12 is merged as `abc1234`", "the tag is pushed".
-- **Then the human's decisions**: only what the human actually decided, in their own words
-  where they gave them. A choice the human hasn't made yet is not a decision: ask first, or
-  give it a decision slot (next bullet). The generator acts on whatever the block states as
-  decided.
-- **Give the human's decision a slot.** When the next step waits on the human, put a clearly
-  marked line near the top of the block, such as `Human's answer (edit before pasting): ...`,
-  prefilled with the recommendation your report gives. The human edits it before pasting, so
-  the line as pasted is their decision; your report still calls it a recommendation. Where
-  the human's own words are required (an acknowledgment, a sign-off), leave the line empty
-  with a placeholder instead. Tell the generator to record the whole pasted block as the
-  human's input, wherever its workflow records human input, and to name the slot's answer in
-  its reply. Recording only the slot drops the rest of what the human sent.
+- **Start with the verified state**, as the review's claims, each checked at its source: "#12
+  is merged as `abc1234`", "the tag is pushed". A fact a decision rests on goes here, not on
+  the decision line (hazard 33).
+- **Then the decision line.** The human's decision for this block goes on one line that
+  starts with the exact marker `HUMAN DECISION:`, placed after the verified state. A block has
+  at most one such line, and has none only when nothing in it waits on or carries a decision
+  of the human's. The text after the marker, as sent (pasted by the human or released by a
+  harness), is the human's decision, whether they have made it already or are still to make
+  it:
+  - **Already decided:** write their decision, in their own words where they gave them.
+  - **Still to decide:** prefill it with the recommendation your report gives. The human
+    edits it before sending, so the line as sent is their decision; your report still calls
+    it a recommendation. Where the human's own words are required (an acknowledgment, a
+    sign-off), write `HUMAN DECISION: <in your own words>`, and tell the generator that a
+    line still holding the placeholder is no decision, and to stop.
+
+  The line carries decisions only: several answers share it, separated by semicolons. It holds
+  no instruction to the human (the report says what to edit) and no factual premise (hazard
+  33). A choice the human hasn't made is stated as decided nowhere else in the block: the
+  generator acts on whatever the block states as decided. Tell the generator to record the
+  whole block as sent as the human's input, wherever its workflow records human input, and to
+  quote the decision line in its reply. Recording only the line drops the rest of what the
+  human sent.
 - **Ask for the generator's recommendations.** When the generator will put a choice to the
   human, ask it for its recommendation on each one, with its reasoning and sources, marked as
   its own. Never tell it to withhold one ("without answering them", "make no
@@ -256,6 +282,27 @@ The generator reads the block and nothing else of your reply, so it must stand a
 - **Make the first line distinctive**, so the next extraction can anchor on it.
 - Put the block in one fenced `text` block, with no fence nested inside it.
 
+This skeleton shows where things go, not wording to copy:
+
+```text
+<distinctive first line: what this block is, and which round>
+
+VERIFIED STATE (review, <date>)
+- <each fact the review checked, with its source: SHAs, PR states, run IDs>
+
+HUMAN DECISION: <the human's decision, or the recommendation for them to edit>
+
+STEPS
+1. <a step small enough to check>
+2. STOP. Report: <the evidence to send back>
+
+RULES AND WHERE THEY COME FROM
+- <each constraint, labelled as the workflow's, the review's, or the human's>
+- Precedence: where this block conflicts with your rules, the rules win; stop and report.
+
+OUT OF BOUNDS: <merging, tagging, settings, and anything else this turn must not do>
+```
+
 ## Hazards
 
 Each line is a lesson that cost a round trip at least once. The reasons and the generic
@@ -286,13 +333,14 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 23. Settings and organisation actions belong to the human.
 24. Gate order: a PR that a later gate reviews stays open until that gate.
 25. Shared memory edited by more than one session.
-26. An instruction block states as decided only what the human decided; an open choice goes in a slot the human edits.
+26. An instruction block states as decided only what the human decided, on its one `HUMAN DECISION:` line; an open choice is prefilled there for the human to edit.
 27. Don't predict identifiers: no PR number, run ID or SHA before it exists.
 28. Separate claiming from checking: never claim another actor's action, always verify its result.
 29. Project state lives in the repositories, not in the skill or in memory.
 30. Keeping a decision with the human never means silencing the generator's recommendation; disagree only after reading its sources in full.
 31. An instruction block restates the generator's own rules only with their source, never stricter.
 32. "The source doesn't say X" needs the whole text; a truncated view hides the sentence that does.
+33. The decision line carries decisions only: a fact goes in the verified state, checked at its source.
 
 ## Reference files
 

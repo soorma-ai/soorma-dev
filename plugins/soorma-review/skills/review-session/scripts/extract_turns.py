@@ -10,15 +10,23 @@ such as ~/.claude/projects, whose project folders are then scanned (exit 1 if
 none is found):
     python3 -I extract_turns.py --list DIR
 
-Extract a turn:
+Extract a turn, from a transcript path or from a session ID:
     python3 -I extract_turns.py TRANSCRIPT [--anchor TEXT | --since ISO | --last-turns N]
                                 [--tools] [--results N] [--full-summaries]
+    python3 -I extract_turns.py --session ID [--root DIR] [same options]
+
+--session ID    resolve ID to DIR/<project folder>/ID.jsonl (exit 1 unless exactly
+                one transcript matches)
+--root DIR      where --session looks (default ~/.claude/projects)
 
 --anchor TEXT   start at the last human message containing TEXT (exit 2 if none)
 --since ISO     keep records at or after this UTC timestamp
 --last-turns N  keep only the last N human turns
 --tools         one line per tool call: its name and command or path
 --results N     each tool result, cut to N characters (errors are marked)
+
+Every extraction writes the transcript's path, working directory, branch and
+last activity to stderr, for confirming it is the right session.
 """
 
 import argparse
@@ -168,10 +176,35 @@ def list_dir(directory, limit=15):
     return 0
 
 
+def resolve_session(session_id, root):
+    """Return the one transcript named session_id in root's project folders,
+    or None after printing why to stderr."""
+    if not session_id or os.path.basename(session_id) != session_id or session_id.startswith("."):
+        print(f"not a session ID: {session_id!r}", file=sys.stderr)
+        return None
+    name = session_id if session_id.endswith(".jsonl") else session_id + ".jsonl"
+    try:
+        folders = sorted(os.listdir(root))
+    except OSError as e:
+        print(f"cannot list {root}: {e.strerror}", file=sys.stderr)
+        return None
+    hits = [os.path.join(root, f, name) for f in folders
+            if os.path.isfile(os.path.join(root, f, name))]
+    if len(hits) != 1:
+        found = "no transcript" if not hits else f"{len(hits)} transcripts"
+        print(f"{found} named {name} under {root}", file=sys.stderr)
+        for h in hits:
+            print(f"    {h}", file=sys.stderr)
+        return None
+    return hits[0]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("transcript", nargs="?")
     ap.add_argument("--list", metavar="DIR")
+    ap.add_argument("--session", metavar="ID")
+    ap.add_argument("--root", metavar="DIR", default=os.path.join("~", ".claude", "projects"))
     group = ap.add_mutually_exclusive_group()
     group.add_argument("--anchor")
     group.add_argument("--since")
@@ -183,8 +216,18 @@ def main(argv=None):
 
     if a.list:
         return list_dir(a.list)
+    if a.session is not None and a.transcript:
+        ap.error("give a transcript path or --session, not both")
+    if a.session is not None:
+        a.transcript = resolve_session(a.session, os.path.expanduser(a.root))
+        if a.transcript is None:
+            return 1
     if not a.transcript:
-        ap.error("a transcript path is required unless --list is given")
+        ap.error("a transcript path or --session is required unless --list is given")
+
+    cwd, branch, last, _ = summarise(a.transcript)
+    print(f"transcript: {a.transcript}\n    cwd={cwd} branch={branch} last={last}",
+          file=sys.stderr)
 
     entries = digest(a.transcript, a.tools, a.results, a.full_summaries, a.since)
     picked = select(entries, a.anchor, a.last_turns)

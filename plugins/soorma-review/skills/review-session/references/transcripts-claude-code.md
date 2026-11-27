@@ -26,6 +26,20 @@ It shows each transcript's folder and session ID, with its working directory, br
 activity and first prompt, newest first. Given a single project folder, it lists just that
 folder. It exits 1, with a message on stderr, if it finds no transcript.
 
+**Given a session ID**, from a harness or the human, skip the listing and let the extractor
+find the file:
+
+```sh
+python3 -I extract_turns.py --session <session-id> --anchor "<phrase>" --tools --results 1500
+```
+
+It looks for `<session-id>.jsonl` in every project folder under `--root` (default
+`~/.claude/projects`), because the folder can't be worked out from the working directory. It
+exits 1, saying why on stderr, unless exactly one transcript matches, or if the ID isn't a bare
+file name (so a handed value can't reach outside the root). Every extraction, by ID or by path,
+prints the transcript's path, working directory, branch and last activity on stderr, which is
+what you confirm against the work.
+
 The file grows while the session runs. Extract once the generator has finished its turn; if
 you extract mid-turn, say so in your report.
 
