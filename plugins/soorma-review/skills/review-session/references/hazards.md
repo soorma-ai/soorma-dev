@@ -40,6 +40,7 @@ project records them, are in that project's reference folder.
 30. [The generator's recommendation](#30-the-generators-recommendation)
 31. [Instruction blocks that reword the workflow's rules](#31-instruction-blocks-that-reword-the-workflows-rules)
 32. [Truncated views and negative claims](#32-truncated-views-and-negative-claims)
+33. [Facts in the decision line](#33-facts-in-the-decision-line)
 
 ## 1. Closing keywords
 
@@ -351,8 +352,10 @@ manager couldn't read a newer lockfile format.
 **Lesson:** claims about how a tool, a specification or a service behaves are often stated
 from memory.
 
-**Do:** check the documentation, or test it. If you can do neither, label the claim as
-inference in the report and the record.
+**Do:** where you can read the code (a repository the work depends on), check the code at the
+commit the work is pinned to: a README or other summary describes the usual path and can omit
+a mode. Otherwise check the documentation, or test it. If you can do none of these, label the
+claim as inference in the report and the record.
 
 **Evidence:** a release note claimed a version with build metadata orders after the plain one,
 which SemVer contradicts; a bot configuration's grouping was assumed, and the docs said
@@ -542,3 +545,26 @@ report when a check rests on a partial read.
 **Evidence:** a review cut each line of a specification to 200 characters, missed a
 requirement's last sentence, and called the generator's correct citation wrong. The generator
 showed the full text, and in doing so found a real error elsewhere.
+
+## 33. Facts in the decision line
+
+**Lesson:** the decision line holds decisions only. Once sent, its text is recorded as the
+human's own words, so a factual premise in it becomes a claim the human made.
+
+**Why:** the generator quotes the line into its record as the human's decision and may act on
+its premise. If the premise is wrong, the record says the human asserted it, and the decision
+rests on it. A generator that catches it has to hold the point open, and a round is lost.
+Hazard 26 keeps a recommendation from passing as the human's decision; this one keeps the
+review's claim from passing as the human's statement.
+
+**Do:** before sending a block, read the decision line for statements of fact ("today X does
+Y", "the spec requires Z"). Move each into the block's verified state, labelled as the
+review's claim with its source, after checking it at its source of truth (hazard 22): for
+code you can read, the code at the commit the work is pinned to, not its README or another
+summary. If you can't check it, label it as inference, or ask the generator to check it. This
+governs what you prefill; the human may still give reasons in their own words.
+
+**Evidence:** a reviewer prefilled the human's answer line with how a library handled
+credentials, taken from the library's README. The library's code had a mode the README didn't
+mention. The generator caught it, recorded the human's words unchanged, and held the point
+open for another round.

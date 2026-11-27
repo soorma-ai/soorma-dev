@@ -122,7 +122,7 @@ List the claims the turn makes, then check each against its source of truth. Fet
 | "Only X changed" | `git diff --stat <base>..<head>`, and the diff itself for anything that matters |
 | "Merged" | the PR's state is MERGED and the merge commit is on the base branch of the remote |
 | "The spec says ..." | the specification at the version the work is pinned to, not at its main branch |
-| "The tool behaves like ..." | the tool's documentation, or a test; otherwise it is inference and is labelled so |
+| "The tool behaves like ..." | its code at the pinned commit, where you can read it; otherwise its documentation, or a test; otherwise it is inference and is labelled so. A README is a summary and can omit a mode |
 | "Deleted the secret" / "stopped the container" | look: the file is gone, the process is gone |
 
 Say plainly which claims you verified and which you are inferring. Re-check your own earlier
@@ -222,7 +222,9 @@ find the state of the work and what has already happened. Keep it accurate rathe
 
 The generator reads the block and nothing else of your reply, so it must stand alone.
 
-- **Start with the verified state**: "#12 is merged as `abc1234`", "the tag is pushed".
+- **Start with the verified state**, as the review's claims, each checked at its source: "#12
+  is merged as `abc1234`", "the tag is pushed". A fact a decision rests on goes here, not on
+  the decision line (hazard 33).
 - **Then the decision line.** The human's decision for this block goes on one line that
   starts with the exact marker `HUMAN DECISION:`, placed after the verified state. A block has
   at most one such line, and has none only when nothing in it waits on or carries a decision
@@ -237,7 +239,8 @@ The generator reads the block and nothing else of your reply, so it must stand a
     line still holding the placeholder is no decision, and to stop.
 
   The line carries decisions only: several answers share it, separated by semicolons. It holds
-  no instruction to the human (the report says what to edit). A choice the human hasn't made is stated as decided nowhere else in the block: the
+  no instruction to the human (the report says what to edit) and no factual premise (hazard
+  33). A choice the human hasn't made is stated as decided nowhere else in the block: the
   generator acts on whatever the block states as decided. Tell the generator to record the
   whole block as sent as the human's input, wherever its workflow records human input, and to
   quote the decision line in its reply. Recording only the line drops the rest of what the
@@ -337,6 +340,7 @@ evidence are in [references/hazards.md](references/hazards.md); read it before y
 30. Keeping a decision with the human never means silencing the generator's recommendation; disagree only after reading its sources in full.
 31. An instruction block restates the generator's own rules only with their source, never stricter.
 32. "The source doesn't say X" needs the whole text; a truncated view hides the sentence that does.
+33. The decision line carries decisions only: a fact goes in the verified state, checked at its source.
 
 ## Reference files
 
